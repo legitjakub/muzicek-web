@@ -1,0 +1,11 @@
+---
+const {section = ''} = Astro.props as {section?: string}
+---
+<footer class="footer">
+  <div class="footer__inner page-width">
+    <div><div class="footer__brand">Mužíček{section ? ` ${section}` : ''}</div><p>Podzimní 10, Jablonec nad Nisou.<br/>Po–Pá 8:00–17:00.</p></div>
+    <nav aria-label="Kontakt"><a href="tel:+420775911005">+420 775 911 005</a><a href="mailto:info@muzicek.com">info@muzicek.com</a><span>Podzimní 10, Jablonec nad Nisou</span></nav>
+    <nav aria-label="Části webu"><a href="/auta/">Mužíček Auta</a><a href="/servis/">Mužíček Servis</a><a href="/detailing/">Mužíček Detailing</a><a href="/">Úvodní rozcestník</a></nav>
+    <div class="footer__meta"><span>© {new Date().getFullYear()} Mužíček</span><span>Po–Pá 8:00–17:00</span></div>
+  </div>
+</footer>

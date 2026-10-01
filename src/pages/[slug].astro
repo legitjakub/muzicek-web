@@ -1,0 +1,23 @@
+---
+import {VisualEditing} from '@sanity/astro/visual-editing'
+import {sanity} from '../lib/sanity'
+import '../styles/site.css'
+import AutosHome from '../components/areas/AutosHome.astro'
+import ServiceHome from '../components/areas/ServiceHome.astro'
+import DetailingHome from '../components/areas/DetailingHome.astro'
+
+type Service={title:string;slug:string;summary:string}
+type Area={title:string;slug:string;shortDescription:string;heroTitle?:string;heroText?:string;services:Service[]}
+export async function getStaticPaths(){
+  const areas=await sanity.fetch<Area[]>(`*[_type == "businessArea"] | order(order asc){title,"slug":slug.current,shortDescription,heroTitle,heroText,"services":*[_type=="service"&&references(^._id)]|order(order asc){title,"slug":slug.current,summary}}`)
+  return areas.map(area=>({params:{slug:area.slug},props:{area}}))
+}
+const {area}=Astro.props as {area:Area}
+const components={auta:AutosHome,servis:ServiceHome,detailing:DetailingHome}
+const AreaComponent=components[area.slug as keyof typeof components]
+---
+<!doctype html>
+<html lang="cs">
+  <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={area.heroText||area.shortDescription}/><title>Mužíček {area.title}</title></head>
+  <body>{AreaComponent&&<AreaComponent area={area}/>}<VisualEditing enabled={import.meta.env.DEV}/></body>
+</html>

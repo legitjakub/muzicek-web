@@ -1,0 +1,23 @@
+---
+const {direction = 'right', size = 20} = Astro.props as {
+  direction?: 'right' | 'left' | 'down' | 'upRight'
+  size?: number
+}
+const rotation = {right: 0, down: 90, left: 180, upRight: -45}[direction]
+---
+<svg
+  class="arrow-icon"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  aria-hidden="true"
+  style={`--arrow-rotation:${rotation}deg`}
+>
+  <path d="M4 12h15M14 7l5 5-5 5" vector-effect="non-scaling-stroke" />
+</svg>
+
+<style>
+  .arrow-icon{display:block;flex:0 0 auto;transform:rotate(var(--arrow-rotation));transform-origin:center}
+  .arrow-icon path{stroke:currentColor;stroke-width:1.5;stroke-linecap:square;stroke-linejoin:miter}
+</style>
