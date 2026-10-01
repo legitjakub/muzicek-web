@@ -2,13 +2,12 @@
 
 Web pro Mužíček Car Detailing v Jablonci nad Nisou. Úvodní rozcestník propojuje tři samostatné části: Auta, Servis a Detailing.
 
-Živá verze: [testmuzicek.netlify.app](https://testmuzicek.netlify.app/)
+Hosting momentálně není aktivní. Původní Netlify prototyp byl 2. října 2026 odstraněn.
 
 ## Technologie
 
 - Astro
 - Sanity CMS
-- Netlify
 
 ## Lokální vývoj
 
