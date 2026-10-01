@@ -5,6 +5,8 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://legitjakub.github.io',
+  base: process.env.GITHUB_PAGES === 'true' ? '/muzicek-web' : '/',
   redirects: {
     '/ppf-folie': '/detailing/ppf/',
     '/wrap-folie': '/detailing/wrap-folie/',
