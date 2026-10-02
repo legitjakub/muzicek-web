@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # Local Netlify folder
 .netlify
+
+# Original supplied brand drafts and video masters are kept locally, not in the public repo.
+source-materials/brand/

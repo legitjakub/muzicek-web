@@ -33,11 +33,11 @@ const paths=[
       <h2>Stejný lesk neznamená stejný postup.</h2>
       <p>Nový vůz, každodenní auto a veterán potřebují jinou přípravu, jinou technologii i jinou následnou péči. Rozhodujeme podle materiálu a skutečného stavu, ne podle univerzálního balíčku.</p>
     </div>
-    <figure><img src="/media/alfa-4c-detail.jpg" alt="Kontrola laku Alfa Romeo 4C v bočním světle" loading="lazy"/><figcaption>Kontrola povrchu v bočním světle</figcaption></figure>
+    <figure><img src="/media/alfa-4c-detail.jpg" alt="Kontrola laku Alfa Romeo 4C v bočním světle" loading="lazy" data-parallax/><figcaption>Kontrola povrchu v bočním světle</figcaption></figure>
   </section>
 
   <section class="service-paths page-width" id="sluzby">
-    <header><p class="kicker">Co chcete s vozem řešit?</p><h2>Čtyři důvody,<br/>proč k nám přijet.</h2></header>
+    <header><p class="kicker">Péče podle cíle</p><h2>Začněte tím, co chcete změnit.</h2></header>
     <div class="service-paths__list">
       {paths.map((path)=><a href={path.href}>
         <span class="service-paths__intent">{path.intent}</span>
@@ -50,7 +50,7 @@ const paths=[
   </section>
 
   <section class="care-standard">
-    <div class="care-standard__image"><img src="/media/hala.jpg" alt="Zabezpečené zázemí studia Mužíček" loading="lazy"/></div>
+    <div class="care-standard__image"><img src="/media/hala.jpg" alt="Zabezpečené zázemí studia Mužíček" loading="lazy" data-parallax/></div>
     <div class="care-standard__copy">
       <p class="kicker">Vůz u nás</p>
       <h2>Máme pod kontrolou práci i to, co je kolem ní.</h2>
@@ -62,9 +62,12 @@ const paths=[
     </div>
   </section>
 
-  <section class="gallery page-width">
-    <div class="gallery__copy"><p class="kicker">Skutečné realizace</p><h2>Práci ukazujeme zblízka.</h2><p>Bez renderů a ilustračních stock fotografií. Vozy, povrchy a proces, který proběhl u nás.</p></div>
-    <div class="gallery__grid"><figure><img src="/media/bmw-m3-touring.jpg" alt="BMW M3 Touring" loading="lazy"/><figcaption>BMW M3 Touring</figcaption></figure><figure><img src="/media/amg-yellow.jpg" alt="Mercedes-AMG GT" loading="lazy"/><figcaption>Mercedes-AMG GT</figcaption></figure><figure><img src="/media/impreza-prodrive.jpg" alt="Subaru Impreza Prodrive" loading="lazy"/><figcaption>Subaru Impreza Prodrive</figcaption></figure></div>
+  <section class="gallery" data-horizontal>
+    <div class="gallery__viewport" data-horizontal-viewport>
+      <div class="gallery__copy"><p class="kicker">Skutečné realizace</p><h2>Práci ukazujeme zblízka.</h2><p>Na fotografiích je to, co projelo naším studiem.</p><span class="gallery__hint" aria-hidden="true">Posouvejte dál&nbsp; →</span></div>
+      <div class="gallery__track" data-horizontal-track><figure><img src="/media/bmw-m3-touring.jpg" alt="BMW M3 Touring" loading="lazy"/><figcaption>BMW M3 Touring</figcaption></figure><figure><img src="/media/amg-yellow.jpg" alt="Mercedes-AMG GT" loading="lazy"/><figcaption>Mercedes-AMG GT</figcaption></figure><figure><img src="/media/impreza-prodrive.jpg" alt="Subaru Impreza Prodrive" loading="lazy"/><figcaption>Subaru Impreza Prodrive</figcaption></figure></div>
+      <div class="gallery__progress" aria-hidden="true"><span></span></div>
+    </div>
   </section>
 
   <section class="detail-contact" id="kontakt"><div class="page-width"><p class="kicker">Konzultace vozu</p><h2>Přijeďte. Povrch projdeme společně.</h2><p>Podzimní 10, Jablonec nad Nisou. Pondělí až pátek, 8:00–17:00.</p><div><a class="button button--red" href="mailto:info@muzicek.com?subject=Poptávka%20Muzicek%20Detailing">Domluvit konzultaci</a><a class="text-link" href="tel:+420775911005">+420 775 911 005</a></div></div></section>
@@ -80,4 +83,22 @@ const paths=[
   .detail-contact{padding:100px 0;background:#0b0b0b;color:#fff}.detail-contact h2{max-width:1000px;margin:20px 0 22px;font-family:'Iowan Old Style','Baskerville',Georgia,serif;font-size:clamp(50px,6vw,86px);font-weight:400;line-height:.92;letter-spacing:-.045em}.detail-contact p:not(.kicker){color:#aaa}.detail-contact>div>div{display:flex;align-items:center;gap:28px;margin-top:34px}
   @media(max-width:980px){.detail-hero{height:auto;grid-template-columns:1fr;padding-top:76px}.detail-hero__copy{min-height:540px}.detail-hero__film{min-height:72svh;max-height:820px}.detail-statement,.service-paths,.care-standard,.gallery{grid-template-columns:1fr}.detail-statement figure{min-height:62vw}.service-paths header{position:static}.service-paths__secondary{grid-column:auto}.care-standard__image{min-height:58vw}.gallery__grid{max-width:900px}}
   @media(max-width:650px){.detail-hero__copy{min-height:510px;padding:125px 18px 42px}.detail-hero h1{font-size:47px}.detail-hero__film{min-height:78svh}.detail-statement__copy,.care-standard__copy{padding:72px 18px}.detail-statement figure{min-height:88vw}.service-paths{padding-block:78px}.service-paths__list>a{grid-template-columns:1fr 30px;min-height:112px}.service-paths__intent{display:none}.service-paths__title{font-size:28px}.service-paths__list img{display:none}.service-paths__secondary{align-items:flex-start;flex-direction:column;gap:18px}.care-standard__image{min-height:78vw}.gallery{padding-block:78px}.gallery__grid{grid-template-columns:repeat(3,76vw);overflow-x:auto}.gallery figure:nth-child(n){margin-top:0}.detail-contact{padding-block:78px}.detail-contact h2{font-size:48px}.detail-contact>div>div{align-items:flex-start;flex-direction:column}}
+  .gallery{display:block;overflow:clip;padding:0;background:#e9e6df}
+  .gallery__viewport{display:flex;align-items:center;gap:clamp(35px,5vw,80px);min-height:680px;padding:90px max(5vw,calc((100vw - 1460px)/2));overflow:hidden}
+  .gallery__copy{flex:0 0 clamp(320px,31vw,480px);opacity:var(--gallery-copy-opacity, 1)}
+  .gallery__copy h2{max-width:460px}
+  .gallery__hint{display:block;margin-top:40px;color:#67645e;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  .gallery__track{display:flex;flex:0 0 auto;gap:16px;width:max-content;will-change:transform}
+  .gallery figure{flex:0 0 clamp(310px,37vw,540px);margin:0!important}
+  .gallery img{width:100%;height:clamp(420px,52vw,610px);aspect-ratio:auto;object-fit:cover}
+  .gallery figcaption{margin-top:14px}
+  .gallery__progress{position:absolute;right:5vw;bottom:48px;left:5vw;height:1px;background:#b4b0a7}
+  .gallery__progress span{display:block;width:100%;height:2px;background:var(--red);transform-origin:left;transform:scaleX(var(--horizontal-progress, 0))}
+  .gallery.horizontal-active{height:var(--horizontal-height)}
+  .gallery.horizontal-active .gallery__viewport{position:sticky;top:0;height:100svh;min-height:650px}
+  .gallery:not(.horizontal-active) .gallery__viewport{flex-wrap:wrap}
+  .gallery:not(.horizontal-active) .gallery__track{max-width:100%;overflow-x:auto;scroll-snap-type:x mandatory}
+  .gallery:not(.horizontal-active) figure{scroll-snap-align:start}
+  @media(max-width:980px){.gallery__viewport{min-height:auto;padding:80px 5vw;display:block}.gallery__copy{max-width:600px;margin-bottom:36px}.gallery__hint{display:none}.gallery__track{gap:12px;width:100%;overflow-x:auto;scroll-snap-type:x mandatory}.gallery figure{flex-basis:72vw;scroll-snap-align:start}.gallery img{height:70vw;max-height:560px}.gallery__progress{display:none}}
+  @media(max-width:650px){.gallery__viewport{padding:76px 18px}.gallery figure{flex-basis:82vw}.gallery img{height:94vw}}
 </style>

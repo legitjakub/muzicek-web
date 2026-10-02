@@ -5,6 +5,7 @@ import '../styles/site.css'
 import AutosHome from '../components/areas/AutosHome.astro'
 import ServiceHome from '../components/areas/ServiceHome.astro'
 import DetailingHome from '../components/areas/DetailingHome.astro'
+import MotionDirector from '../components/MotionDirector.astro'
 
 type Service={title:string;slug:string;summary:string}
 type Area={title:string;slug:string;shortDescription:string;heroTitle?:string;heroText?:string;services:Service[]}
@@ -19,5 +20,5 @@ const AreaComponent=components[area.slug as keyof typeof components]
 <!doctype html>
 <html lang="cs">
   <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content={area.heroText||area.shortDescription}/><title>Mužíček {area.title}</title></head>
-  <body>{AreaComponent&&<AreaComponent area={area}/>}<VisualEditing enabled={import.meta.env.DEV}/></body>
+  <body>{AreaComponent&&<AreaComponent area={area}/>}<MotionDirector/><VisualEditing enabled={import.meta.env.DEV}/></body>
 </html>

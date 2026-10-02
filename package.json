@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "build:pages": "GITHUB_PAGES=true astro build && node scripts/prepare-github-pages.mjs",
+    "archive:legacy": "node scripts/archive-legacy-site.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
