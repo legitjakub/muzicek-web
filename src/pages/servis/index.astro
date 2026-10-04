@@ -1,0 +1,246 @@
+---
+import Base from '../../layouts/Base.astro'
+import Hero from '../../components/Hero.astro'
+import Img from '../../components/Img.astro'
+import InquiryForm from '../../components/InquiryForm.astro'
+import {u} from '../../lib/url'
+import {getContent} from '../../lib/content'
+
+const {areas, services} = await getContent()
+const area = areas.find((a) => a.slug === 'servis')!
+const svc = services.filter((s) => s.area === 'servis')
+const thumbs: Record<string, string> = {'servis-a-performance': 'cayman-wing', 'suchy-led': 'dry-ice-5', 'antikorozni-ochrana-podvozku': 'octavia-13'}
+const stages = [
+  {t: 'Vstupní kontrola', x: 'Projdeme stav vozu, historii a příznaky.', std: 'Diagnostika před výměnou dílů', img: 'battery', alt: 'Kontrola motorového prostoru při příjmu vozu'},
+  {t: 'Návrh práce', x: 'Vysvětlíme varianty, cenu a reálný termín.', std: 'Potvrzený rozsah a rozpočet', img: 'caliper', alt: 'Karbon-keramický brzdový kotouč se žlutým třmenem'},
+  {t: 'Realizace', x: 'Průběh dokumentujeme a změny rozsahu potvrzujeme.', std: 'Originální nebo ověřené díly', img: 'wrench-brake', alt: 'Mechanik utahuje brzdový třmen'},
+  {t: 'Kontrola a předání', x: 'Výsledek ověříme před osobním předáním.', std: 'Společná kontrola při předání', img: 'm2-rear', alt: 'BMW M2 po dokončené práci v hale Mužíček'},
+]
+const lift = [
+  {id: 'octavia-13', t: 'Podvozek', c: 'a'}, {id: 'octavia-14', t: 'Zavěšení a pružiny', c: 'b'}, {id: 'octavia-12', t: 'Motorový prostor 1.8T', c: 'c'}, {id: 'octavia-15', t: 'Spodek vozu na zvedáku', c: 'd'},
+]
+---
+<Base
+  world="servis"
+  title="Mužíček Servis — servis, performance, suchý led a ochrana podvozku"
+  description={area.heroText ?? area.shortDescription}
+  image="hands-wrench"
+>
+  <link slot="head" rel="preload" as="image" href={u('/img/hands-wrench-1600.webp')} imagesrcset={`${u('/img/hands-wrench-800.webp')} 800w, ${u('/img/hands-wrench-1600.webp')} 1600w`} imagesizes="100vw" fetchpriority="high" />
+
+  <Hero
+    world="servis" num="02" kicker="Servis & Performance" image="hands-wrench" pos="50% 38%" alt="Ruce mechanika v montérkách s klíčem"
+    title={['Nejdřív příčina.', 'Potom řešení.']}
+    lede="Podle postupů výrobců, s originálními nebo ověřenými díly a s možností projít práci přímo s mechanikem."
+    actions={[{label: 'Poptat servis', href: '#poptavka'}]}
+    strip={[
+      {label: 'Servis a performance', href: '/servis/servis-a-performance/'},
+      {label: 'Čištění suchým ledem', href: '/servis/suchy-led/'},
+      {label: 'Ochrana podvozku', href: '/servis/antikorozni-ochrana-podvozku/'},
+      {label: 'Jak pracujeme', href: '#postup'},
+    ]}
+  />
+
+  <section class="brands wrap" aria-label="Značky">
+    <p class="label rail">02 · Servis</p>
+    <p class="display brands__text" data-wordscrub>Servisujeme vozy Porsche, BMW, Mercedes-Benz, Audi, Volkswagen a další.</p>
+  </section>
+
+  <!-- SIGNATURE: sticky workshop process — mechanical image on the left, stages change with scroll -->
+  <section class="bench" id="postup" data-bench aria-labelledby="bench-title">
+    <div class="bench__stage">
+      <div class="bench__visual">
+        {stages.map((s, i) => (
+          <div class="bench__img" data-state={i}><Img id={s.img} class="cover" alt={s.alt} sizes="(min-width: 900px) 50vw, 100vw" eager={i === 0} /></div>
+        ))}
+        <div class="bench__scan" aria-hidden="true"></div>
+      </div>
+      <div class="bench__copy">
+        <header class="bench__head">
+          <p class="label">Jak pracujeme</p>
+          <h2 id="bench-title" class="display t-l">Čtyři kroky, žádná překvapení.</h2>
+        </header>
+        <ol class="bench__steps">
+          {stages.map((s, i) => (
+            <li class="stage" data-state={i}>
+              <p class="stage__n label"><b class="num">0{i + 1}</b> / 04</p>
+              <h3 class="display stage__t">{s.t}</h3>
+              <p class="stage__x">{s.x}</p>
+              <p class="stage__std"><span>Standard</span>{s.std}</p>
+            </li>
+          ))}
+        </ol>
+        <div class="bench__gauge" aria-hidden="true"><i></i>{stages.map((_, i) => <b class="num">0{i + 1}</b>)}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- spec-sheet ledger -->
+  <section class="ledger wrap" aria-labelledby="ledger-title">
+    <header>
+      <p class="label" data-reveal="fade">Co děláme</p>
+      <h2 id="ledger-title" class="display t-l" data-split>Tři disciplíny.</h2>
+    </header>
+    <div class="ledger__rows">
+      {svc.map((s, i) => (
+        <a class="row" href={u(`/servis/${s.slug}/`)} data-reveal="up">
+          <span class="row__n num">0{i + 1}</span>
+          <span class="row__t display">{s.title}</span>
+          <span class="row__s">{s.summary}</span>
+          <dl class="row__d"><div><dt>Doba</dt><dd>{s.duration}</dd></div><div><dt>Nacenění</dt><dd>{s.priceNote}</dd></div></dl>
+          <span class="row__img frame" aria-hidden="true"><Img id={thumbs[s.slug] ?? 'cayman-wing'} class="cover" sizes="320px" /></span>
+          <span class="row__go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12h15M13 6l6 6-6 6" /></svg></span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- dry ice: a slit of light opens into the full frame -->
+  <section class="ice" data-progress="track" aria-labelledby="ice-title">
+    <div class="ice__stage">
+      <div class="ice__frame">
+        <Img id="dry-ice-3" class="cover" alt="Čištění podvozku suchým ledem, oblak par pod vozem na zvedáku" pos="50% 40%" sizes="100vw" />
+        <div class="ice__shade"></div>
+      </div>
+      <div class="ice__copy wrap">
+        <p class="label">Suchý led</p>
+        <h2 id="ice-title" class="display t-xl">Nečistoty pryč.<br />Materiál zůstává.</h2>
+        <ul class="ice__facts">
+          <li><b class="num">01</b>Bez vody</li><li><b class="num">02</b>Bez abraziva</li><li><b class="num">03</b>Bez zbytkového odpadu</li>
+        </ul>
+        <a class="link" href={u('/servis/suchy-led/')}>Jak technologie funguje</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- technical strip: the underside, annotated -->
+  <section class="lift wrap" aria-labelledby="lift-title">
+    <header>
+      <p class="label" data-reveal="fade">Pod vozem</p>
+      <h2 id="lift-title" class="display t-l" data-split>Podvozek, který je vidět.</h2>
+      <p class="mute lede" data-reveal="up">Škoda Octavia RS Mk1 z naší nabídky při prohlídce na zvedáku.</p>
+    </header>
+    <div class="lift__grid">
+      {lift.map((l, i) => (
+        <figure class:list={['lift__item', `l-${l.c}`]} data-reveal="mask-x" style={`--delay:${i * 0.08}s`}>
+          <div class="frame"><Img id={l.id} class="cover" alt={l.t} sizes="(min-width: 900px) 40vw, 100vw" /></div>
+          <figcaption class="note"><b class="num">0{i + 1}</b>{l.t}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section class="contact wrap" id="poptavka" aria-labelledby="contact-title">
+    <header>
+      <p class="label" data-reveal="fade">Objednat servis</p>
+      <h2 id="contact-title" class="display t-xl" data-split>Popište vůz a co potřebujete vyřešit.</h2>
+    </header>
+    <InquiryForm area="servis" />
+  </section>
+
+  <script>
+    import {states, whenPinned} from '../../scripts/core'
+    const bench = document.querySelector<HTMLElement>('[data-bench]')
+    if (bench) {
+      const n = bench.querySelectorAll('.stage').length
+      whenPinned(() => states(bench, {n, w: 0.18}))
+    }
+  </script>
+</Base>
+
+<style>
+  .brands { display: grid; gap: 22px; padding-block: clamp(100px, 15vw, 240px); }
+  .brands__text { max-width: 16ch; font-size: clamp(54px, 10.4vw, 190px); line-height: .88; }
+  .rail { color: var(--mute); }
+  @media (min-width: 900px) { .brands { grid-template-columns: 12ch 1fr; align-items: start; } .rail { padding-top: 1.6vw; } }
+
+  /* bench — stacked by default */
+  .bench { background: var(--steel-2); }
+  .bench__img { position: relative; aspect-ratio: 3 / 2; overflow: hidden; }
+  .bench__copy { padding: 60px var(--gutter); display: grid; gap: 40px; }
+  .bench__head { display: grid; gap: 14px; }
+  .bench__steps { display: grid; gap: 0; }
+  .stage { display: grid; gap: 10px; padding: 28px 0; border-top: 1px solid var(--line); }
+  .stage__t { font-size: clamp(38px, 9vw, 64px); }
+  .stage__x { max-width: 34ch; font-size: 18px; color: color-mix(in srgb, var(--fg) 82%, transparent); }
+  .stage__std { display: flex; gap: 14px; align-items: baseline; font: 600 13px var(--f-display); letter-spacing: .14em; text-transform: uppercase; color: var(--fg); }
+  .stage__std span { color: var(--red); }
+  .bench__gauge, .bench__scan { display: none; }
+  .bench__visual { display: grid; }
+
+  .bench.is-pinned { height: 460vh; }
+  .bench.is-pinned .bench__stage { position: sticky; top: 0; height: 100svh; display: grid; grid-template-columns: 1.08fr .92fr; overflow: hidden; }
+  .bench.is-pinned .bench__visual { position: relative; display: block; overflow: hidden; }
+  .bench.is-pinned .bench__img { position: absolute; inset: 0; aspect-ratio: auto; clip-path: inset(calc((1 - var(--in, 1)) * 100%) 0 0 0); }
+  .bench.is-pinned .bench__img:nth-child(2) { z-index: 2; } .bench.is-pinned .bench__img:nth-child(3) { z-index: 3; } .bench.is-pinned .bench__img:nth-child(4) { z-index: 4; }
+  .bench.is-pinned .bench__img :global(img) { transform: translate3d(0, calc((1 - var(--in, 1)) * 8% - var(--out, 0) * 4%), 0) scale(calc(1.06 + var(--out, 0) * .06)); filter: grayscale(.25) contrast(1.06); }
+  .bench.is-pinned .bench__scan { display: block; position: absolute; z-index: 6; left: 0; right: 0; top: calc(var(--p, 0) * 100%); height: 1px; background: rgba(255,255,255,.55); box-shadow: 0 0 0 1px rgba(255,255,255,.05); pointer-events: none; }
+  .bench.is-pinned .bench__copy { position: relative; display: block; padding: calc(var(--header-h) + 36px) var(--gutter) 60px clamp(28px, 4vw, 70px); }
+  .bench.is-pinned .bench__head { position: absolute; top: calc(var(--header-h) + 36px); left: clamp(28px, 4vw, 70px); right: var(--gutter); }
+  .bench.is-pinned .bench__head h2 { font-size: clamp(36px, 3.8vw, 64px); max-width: 14ch; }
+  .bench.is-pinned .bench__steps { position: absolute; inset: 0; display: block; }
+  .bench.is-pinned .stage { position: absolute; left: clamp(28px, 4vw, 70px); right: var(--gutter); bottom: 14vh; border: 0; padding: 0;
+    opacity: calc(clamp(0, (var(--in, 1) - .5) * 2.4, 1) * (1 - clamp(0, var(--out, 0) * 3, 1)));
+    transform: translate3d(0, calc((1 - clamp(0, (var(--in, 1) - .4) * 1.8, 1)) * 50px - var(--out, 0) * 40px), 0); }
+  .bench.is-pinned .stage__t { font-size: clamp(54px, 6.4vw, 118px); }
+  .bench.is-pinned .bench__gauge { display: flex; justify-content: space-between; position: absolute; left: clamp(28px, 4vw, 70px); right: var(--gutter); bottom: 40px; padding-top: 14px; font: 600 12px var(--f-display); letter-spacing: .16em; color: var(--mute); border-top: 1px solid var(--line); }
+  .bench.is-pinned .bench__gauge i { position: absolute; left: 0; top: -1px; height: 1px; width: calc(var(--p, 0) * 100%); background: var(--red); }
+
+  /* ledger */
+  .ledger { padding-block: clamp(90px, 13vw, 200px); display: grid; gap: 50px; }
+  .ledger header { display: grid; gap: 16px; }
+  .ledger__rows { border-top: 1px solid var(--line); }
+  .row { position: relative; display: grid; gap: 10px 24px; grid-template-columns: 40px 1fr 40px; align-items: start; padding: 28px 0; border-bottom: 1px solid var(--line); transition: padding .5s var(--ease), background-color .3s; }
+  .row__n { color: var(--red); font: 600 15px var(--f-display); letter-spacing: .1em; padding-top: .6em; }
+  .row__t { font-size: clamp(34px, 5.4vw, 92px); grid-column: 2; }
+  .row__s { grid-column: 2; max-width: 44ch; color: color-mix(in srgb, var(--fg) 78%, transparent); }
+  .row__d { grid-column: 2; display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 14px; }
+  .row__d div { display: flex; gap: 14px; }
+  .row__d dt { min-width: 84px; color: var(--mute); font: 600 12px var(--f-display); letter-spacing: .14em; text-transform: uppercase; padding-top: 2px; }
+  .row__img { display: none; }
+  .row__go { grid-column: 3; grid-row: 1; justify-self: end; width: 32px; transition: transform .4s var(--ease), color .3s; }
+  .row:hover .row__go, .row:focus-visible .row__go { transform: translateX(8px); color: var(--red); }
+  @media (min-width: 900px) {
+    .row { grid-template-columns: 56px minmax(0, 1.25fr) minmax(0, 1fr) 260px 40px; align-items: center; padding-block: 38px; }
+    .row__t { grid-column: 2; grid-row: 1 / 3; } .row__s { grid-column: 3; grid-row: 1; } .row__d { grid-column: 3; grid-row: 2; }
+    .row__img { display: block; grid-column: 4; grid-row: 1 / 3; aspect-ratio: 4 / 3; clip-path: inset(0 0 0 100%); transition: clip-path .7s var(--ease); }
+    .row__go { grid-column: 5; grid-row: 1 / 3; align-self: center; }
+    .row:hover .row__img, .row:focus-visible .row__img { clip-path: inset(0); }
+    .row:hover .row__t, .row:focus-visible .row__t { color: var(--red); }
+    .row__n { padding-top: 0; }
+  }
+
+  /* ice */
+  .ice { background: #05070a; height: 230vh; }
+  .ice__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; color: #fff; }
+  .ice__frame { position: absolute; inset: 0; clip-path: inset(0 calc((1 - clamp(0, var(--p, 0) * 3.2, 1)) * 36%) 0 calc((1 - clamp(0, var(--p, 0) * 3.2, 1)) * 36%)); }
+  .ice__frame :global(img) { transform: scale(calc(1.3 - clamp(0, var(--p, 0) * 2, 1) * .26)); }
+  .ice__shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(3,5,8,.9), rgba(3,5,8,.15) 65%); }
+  .ice__copy { position: absolute; inset: auto 0 0; display: grid; gap: 20px; padding-bottom: clamp(30px, 7vh, 80px); justify-items: start;
+    opacity: clamp(0, (var(--p, 0) - .12) * 4, 1); transform: translate3d(0, calc((1 - clamp(0, (var(--p, 0) - .1) * 4, 1)) * 40px), 0); }
+  .ice__copy h2 { font-size: clamp(48px, 9vw, 168px); }
+  .ice__facts { display: flex; flex-wrap: wrap; gap: 10px 38px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.3); font: 600 15px var(--f-display); letter-spacing: .14em; text-transform: uppercase; }
+  .ice__facts b { margin-right: 10px; color: var(--red); }
+  :global(.rm) .ice { height: auto; } :global(.rm) .ice__stage { position: relative; height: 90svh; } :global(.rm) .ice__frame { clip-path: none; } :global(.rm) .ice__frame :global(img) { transform: none; } :global(.rm) .ice__copy { opacity: 1; transform: none; }
+  @media (max-width: 899px) { .ice { height: auto; } .ice__stage { position: relative; height: 90svh; min-height: 540px; } .ice__frame { clip-path: none; } .ice__frame :global(img) { transform: none; } .ice__copy { opacity: 1; transform: none; } }
+
+  /* lift */
+  .lift { padding-block: clamp(90px, 13vw, 200px); display: grid; gap: 54px; }
+  .lift header { display: grid; gap: 16px; }
+  .lift__grid { display: grid; gap: 34px; }
+  .lift__item .frame { aspect-ratio: 3 / 2; }
+  .note { display: flex; gap: 12px; align-items: baseline; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); font: 600 13px var(--f-display); letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--fg) 80%, transparent); }
+  .note b { color: var(--red); }
+  @media (min-width: 900px) {
+    .lift__grid { grid-template-columns: repeat(12, 1fr); gap: 56px clamp(20px, 3vw, 48px); align-items: start; }
+    .l-a { grid-column: 1 / 8; } .l-a .frame { aspect-ratio: 16 / 10; }
+    .l-b { grid-column: 9 / 13; margin-top: 12vw; } .l-b .frame { aspect-ratio: 4 / 5; }
+    .l-c { grid-column: 2 / 6; } .l-c .frame { aspect-ratio: 4 / 5; }
+    .l-d { grid-column: 7 / 13; margin-top: 6vw; } .l-d .frame { aspect-ratio: 3 / 2; }
+  }
+
+  .contact { display: grid; gap: 50px; padding-block: clamp(90px, 13vw, 200px); background: var(--steel); border-top: 1px solid var(--line); }
+  .contact header { display: grid; gap: 18px; align-content: start; }
+  .contact h2 { max-width: 12ch; }
+  @media (min-width: 900px) { .contact { grid-template-columns: 1fr 1fr; gap: 8vw; } }
+</style>

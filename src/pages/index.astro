@@ -1,153 +1,236 @@
 ---
-import {VisualEditing} from '@sanity/astro/visual-editing'
-import {sanity} from '../lib/sanity'
-import '../styles/site.css'
-import ArrowIcon from '../components/ArrowIcon.astro'
-
-type Area = {title: string; slug: string; shortDescription: string}
-const areas = await sanity.fetch<Area[]>(`*[_type == "businessArea"] | order(order asc) {
-  title, "slug": slug.current, shortDescription
-}`)
-
-const areaImages: Record<string, string> = {
-  auta: '/media/vehicle-audi-rs4-1.jpg',
-  servis: '/media/service-cayman.jpg',
-  detailing: '/media/ppf-work.jpg',
-}
-const areaLabels: Record<string, string> = {auta: 'Auta', servis: 'Servis', detailing: 'Detailing'}
-const areaDescriptions: Record<string, string> = {
-  auta: 'Prověření, dovoz, prodej a krytá přeprava.',
-  servis: 'Pravidelná údržba, opravy, performance a péče o podvozek.',
-  detailing: 'Ochrana, změna vzhledu, obnova a pravidelná péče.',
-}
+import Base from '../layouts/Base.astro'
+import Img from '../components/Img.astro'
+import {u} from '../lib/url'
+import {worlds, contact} from '../data/site'
 ---
+<Base
+  title="Mužíček — auta, servis a detailing v Jablonci nad Nisou"
+  description="Jeden automobilový ateliér, tři světy: dovoz a prodej vozů, servis a performance, detailing a ochrana laku. Jablonec nad Nisou."
+  image="hala"
+>
+  <link slot="head" rel="preload" as="image" href={u('/img/hala-1600.webp')} imagesrcset={`${u('/img/hala-800.webp')} 800w, ${u('/img/hala-1600.webp')} 1600w`} imagesizes="100vw" fetchpriority="high" />
 
-<!doctype html>
-<html lang="cs">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Mužíček — dovoz a prodej vozů, servis a detailing v Jablonci nad Nisou." />
-    <title>Mužíček — auta, servis a detailing</title>
-  </head>
-  <body class="portal-page">
-    <a class="home-skip" href="#main-content">Přejít na obsah</a>
-    <header class="site-header">
-      <a class="brand" href="/" aria-label="Mužíček — domů"><img src="/images/muzicek-mark.png" alt="" /></a>
-      <p class="header-note">Jablonec nad Nisou<br />Po–Pá 8:00–17:00</p>
-      <a class="header-contact" href="mailto:info@muzicek.com"><span>Napsat nám</span><ArrowIcon /></a>
-    </header>
+  <!-- ① brand introduction -->
+  <section class="intro" aria-labelledby="intro-title">
+    <div class="intro__media"><Img id="hala" class="cover" priority alt="Hala ateliéru Mužíček v Jablonci nad Nisou s vozy v showroomu" pos="50% 62%" /></div>
+    <div class="intro__shade"></div>
+    <div class="intro__copy wrap">
+      <p class="label intro__kicker" data-reveal="fade" style="--delay:.5s">Mužíček · Auta · Servis · Detailing</p>
+      <h1 id="intro-title" class="display t-xl" data-split style="--delay:.25s">Jeden ateliér.<br />Tři světy<br />automobilu.</h1>
+      <div class="intro__foot">
+        <p class="lede" data-reveal="up" style="--delay:1s">Vůz, práce a lidé, kteří za ní stojí. Od roku 2014 v Jablonci nad Nisou.</p>
+        <a class="link intro__cue" href="#svety" data-reveal="fade" style="--delay:1.3s">Vybrat svět</a>
+      </div>
+    </div>
+  </section>
 
-    <main id="main-content">
-      <section class="portal-home" aria-labelledby="portal-title">
-        <div class="backdrop" aria-hidden="true">
-          {areas.map((area, index) => (
-            <div class:list={['portal-bg', {'is-active': index === 0}]} data-slug={area.slug} style={`background-image: url('${areaImages[area.slug]}')`}></div>
-          ))}
-        </div>
+  <!-- ② the selector: one sticky stage, three worlds -->
+  <section class="hub" id="svety" data-hub aria-label="Tři světy Mužíček">
+    <div class="hub__stage">
+      {worlds.map((w, i) => (
+        <article class="world" id={`svet-${w.key}`} data-state={i} data-w={w.key} data-parallax-host aria-labelledby={`world-title-${w.key}`}>
+          <div class="world__media"><div class="world__par" data-parallax="0.06"><Img id={w.image} class="cover" alt="" pos={w.pos} eager={i === 0} sizes="100vw" /></div></div>
+          <div class="world__tone" aria-hidden="true"></div>
+          {w.key === 'servis' && <div class="world__ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>}
+          {w.key === 'detailing' && <div class="world__sweep" aria-hidden="true"></div>}
+          <div class="world__copy wrap">
+            <p class="world__idx label"><b class="num">{w.num}</b><span>/ 03</span><em>{w.accent}</em></p>
+            <h2 class="world__title display" id={`world-title-${w.key}`}>
+              <a href={u(w.href)} aria-label={`${w.num} ${w.title.join(' ')} — ${w.cta}`}>
+                {w.title.map((line, k) => <span class="ln" style={`--lag:${k * 0.14}`}><span>{line}</span></span>)}
+              </a>
+            </h2>
+            <div class="world__row">
+              <p class="world__statement">{w.statement}</p>
+              <div class="world__side">
+                <ul class="world__tags" aria-label="Co najdete">{w.tags.map((t) => <li>{t}</li>)}</ul>
+                <a class="link" href={u(w.href)}>{w.cta}</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      ))}
+      <nav class="hub__nav" aria-label="Vybrat svět">
+        <span class="hub__bar" aria-hidden="true"><i></i></span>
+        {worlds.map((w, i) => <a href={`#svet-${w.key}`} data-k={i}><b class="num">{w.num}</b><span>{w.label}</span></a>)}
+      </nav>
+    </div>
+  </section>
 
-        <h1 class="sr-only" id="portal-title">Mužíček — auta, servis a detailing</h1>
+  <!-- ③ after the selector: why one atelier -->
+  <section class="manifest wrap" aria-labelledby="manifest-title">
+    <div class="manifest__text">
+      <p class="label" data-reveal="fade">Auto · Práce · Lidé</p>
+      <h2 id="manifest-title" class="display t-l" data-split>Auto je začátek. Rozhoduje práce a lidé za ní.</h2>
+      <p class="lede" data-reveal="up">Z malé dílny jsme od roku 2014 vybudovali studio, kde o vozy pečuje tým zkušených odborníků. Ke každému autu přistupujeme s péčí, jako by bylo naše vlastní.</p>
+      <a class="link" href={u('/realizace/')} data-reveal="up">Podívat se na realizace</a>
+    </div>
+    <div class="manifest__stack" aria-hidden="false">
+      <figure class="frame m1" data-parallax-host><Img id="hands-wrench" class="cover" data-parallax="0.1" alt="Ruce mechanika s montážním klíčem" sizes="(min-width: 900px) 30vw, 60vw" /></figure>
+      <figure class="frame m2" data-parallax-host><Img id="ppf-door" class="cover" alt="Aplikace ochranné fólie na dveře vozu" sizes="(min-width: 900px) 40vw, 80vw" /></figure>
+      <figure class="frame m3" data-parallax-host><Img id="polish-worker" class="cover" alt="Strojní leštění laku" sizes="(min-width: 900px) 24vw, 50vw" /></figure>
+    </div>
+  </section>
 
-        <nav class="portal-list" aria-label="Oblasti Mužíček">
-          {areas.map((area) => (
-            <a class="portal" href={`/${area.slug}/`} data-portal={area.slug}>
-              <span class="portal-title">{areaLabels[area.slug] || area.title}</span>
-              <span class="portal-description">{areaDescriptions[area.slug] || area.shortDescription}</span>
-              <span class="portal-arrow"><ArrowIcon direction="upRight" /></span>
-            </a>
-          ))}
-        </nav>
-      </section>
-    </main>
+  <!-- ④ featured project -->
+  <section class="feature" data-progress aria-labelledby="feature-title">
+    <a class="feature__frame" href={u('/realizace/audi-rs6/')}>
+      <Img id="rs6-1" class="cover" alt="Audi RS6 Avant po kompletní péči v showroomu Mužíček" sizes="100vw" />
+      <span class="feature__shade"></span>
+      <span class="feature__copy wrap">
+        <span class="label">Realizace</span>
+        <span class="display t-l" id="feature-title">Audi RS6 Avant</span>
+        <span class="feature__meta">2021 · 4.0 TFSI V8 · 591 HP — PPF full polep, keramická ochrana, renovace laku</span>
+        <span class="link">Příběh realizace</span>
+      </span>
+    </a>
+  </section>
 
-    <script>
-      const links = Array.from(document.querySelectorAll<HTMLElement>('[data-portal]'))
-      const backgrounds = Array.from(document.querySelectorAll<HTMLElement>('.portal-bg'))
-      let activeSlug = links[0]?.dataset.portal
-      let filmTimer: number | undefined
-
-      function showBackground(slug?: string) {
-        if (!slug || slug === activeSlug) return
-        activeSlug = slug
-        backgrounds.forEach((background) => background.classList.toggle('is-active', background.dataset.slug === slug))
+  <script>
+    import {states, whenPinned, stateTop} from '../scripts/core'
+    const hub = document.querySelector<HTMLElement>('[data-hub]')
+    if (hub) {
+      const worldEls = [...hub.querySelectorAll<HTMLElement>('.world')]
+      const links = [...hub.querySelectorAll<HTMLAnchorElement>('.hub__nav a')]
+      const n = worldEls.length
+      const mark = (i: number) => {
+        worldEls.forEach((w, k) => w.toggleAttribute('inert', k !== i))
+        links.forEach((a, k) => (k === i ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')))
       }
-      function startFilm() {
-        window.clearInterval(filmTimer)
-        filmTimer = window.setInterval(() => {
-          const index = links.findIndex((link) => link.dataset.portal === activeSlug)
-          showBackground(links[(index + 1) % links.length]?.dataset.portal)
-        }, 5600)
+      const goTo = (k: number) => {
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+        if (hub.classList.contains('is-pinned')) scrollTo({top: stateTop(hub, k, n), behavior: reduce ? 'auto' : 'smooth'})
+        else worldEls[k].scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'start'})
       }
-      links.forEach((link) => {
-        link.addEventListener('pointerenter', () => { window.clearInterval(filmTimer); showBackground(link.dataset.portal) })
-        link.addEventListener('focus', () => { window.clearInterval(filmTimer); showBackground(link.dataset.portal) })
-        link.addEventListener('pointerleave', startFilm)
-        link.addEventListener('blur', startFilm)
+      links.forEach((a, k) => {
+        a.addEventListener('click', (e) => { e.preventDefault(); goTo(k) })
+        a.addEventListener('keydown', (e) => {
+          const d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0
+          if (!d) return
+          e.preventDefault()
+          const next = Math.min(n - 1, Math.max(0, k + d))
+          links[next].focus(); goTo(next)
+        })
       })
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) startFilm()
-    </script>
-    <VisualEditing enabled={import.meta.env.DEV} />
-  </body>
-</html>
+      whenPinned(() => {
+        const stop = states(hub, {n, onIndex: mark})
+        const m = location.hash.match(/^#svet-(.+)$/)
+        const k = m ? worldEls.findIndex((w) => w.dataset.w === m[1]) : -1
+        if (k > 0) requestAnimationFrame(() => scrollTo({top: stateTop(hub, k, n), behavior: 'auto'}))
+        return () => { stop(); worldEls.forEach((w) => w.removeAttribute('inert')); links.forEach((a) => a.removeAttribute('aria-current')) }
+      })
+    }
+  </script>
+</Base>
 
 <style>
-  .portal-page { background: #e8e5de; }
-  .home-skip { position: fixed; z-index: 100; top: 10px; left: 10px; padding: 10px 14px; background: #fff; color: #111; font-size: 11px; font-weight: 800; transform: translateY(-160%); transition: transform .15s; }
-  .home-skip:focus { transform: translateY(0); }
-  .site-header { position: absolute; z-index: 20; inset: 0 0 auto; height: 96px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 clamp(20px, 3.5vw, 58px); border-bottom: 1px solid rgba(255,255,255,.34); color: #fff; }
-  .brand { display: flex; align-items: center; }
-  .brand img { width: 82px; height: 40px; object-fit: contain; filter: brightness(0) invert(1); }
-  .header-note { margin: 0; text-align: center; font-size: 9px; font-weight: 700; line-height: 1.55; letter-spacing: .14em; text-transform: uppercase; }
-  .header-contact { justify-self: end; display: flex; align-items: center; gap: 12px; font-size: 10px; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
-  .header-contact :global(svg) { color: var(--red); }
+  /* intro */
+  .intro { position: relative; min-height: 100svh; display: grid; align-items: end; overflow: hidden; color: #fff; isolation: isolate; background: #111; }
+  .intro__media { position: absolute; inset: 0; z-index: -2; }
+  .intro__media :global(img) { animation: intro-in 3s var(--ease) both; }
+  .intro__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgba(5,5,6,.88), rgba(5,5,6,.1) 62%), linear-gradient(90deg, rgba(5,5,6,.55), transparent 70%); }
+  .intro__copy { display: grid; gap: clamp(16px, 2.4vh, 28px); padding-bottom: clamp(28px, 5vh, 56px); padding-top: calc(var(--header-h) + 40px); }
+  .intro__kicker { color: rgba(255,255,255,.78); }
+  .intro h1 { max-width: 11ch; line-height: .84; }
+  .intro__foot { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 24px; padding-top: clamp(14px, 3vh, 36px); border-top: 1px solid rgba(255,255,255,.28); }
+  .intro__foot .lede { color: rgba(255,255,255,.86); max-width: 34ch; }
+  @keyframes intro-in { from { transform: scale(1.2); filter: brightness(.55); } to { transform: scale(1.02); filter: none; } }
+  :global(.rm) .intro__media :global(img) { animation: none; }
 
-  .portal-home { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(145px, 18vh, 210px) clamp(20px, 3.5vw, 58px) clamp(25px, 5vh, 56px); overflow: hidden; isolation: isolate; color: #fff; }
-  .backdrop, .backdrop::after, .portal-bg { position: absolute; inset: 0; }
-  .backdrop { z-index: -3; background: #111; }
-  .backdrop::after { content: ''; background: linear-gradient(0deg, rgba(0,0,0,.87), rgba(0,0,0,.22) 67%, rgba(0,0,0,.28)), linear-gradient(90deg, rgba(0,0,0,.32), transparent 75%); }
-  .portal-bg { opacity: 0; background-size: cover; background-position: center; transform: scale(1.035); transition: opacity 1.1s cubic-bezier(.25,.1,.25,1); }
-  .portal-bg[data-slug='auta'] { background-position: center 58%; }
-  .portal-bg[data-slug='servis'] { background-position: center 52%; }
-  .portal-bg[data-slug='detailing'] { background-position: center 46%; }
-  .portal-bg.is-active { opacity: 1; animation: camera-drift 11s cubic-bezier(.25,.1,.25,1) both; }
-  @keyframes camera-drift { from { transform: scale(1.015); } to { transform: scale(1.065); } }
+  /* hub — stacked layout (mobile, tablet portrait, reduced motion, no JS) */
+  .hub { position: relative; background: #0b0b0c; color: #fff; }
+  .world { position: relative; min-height: 100svh; display: grid; align-items: end; overflow: hidden; isolation: isolate; }
+  .world__media { position: absolute; inset: 0; z-index: -3; }
+  .world__par { position: absolute; inset: -6% 0; }
+  .world__tone { position: absolute; inset: 0; z-index: -2; background: linear-gradient(0deg, rgba(5,5,6,.9), rgba(5,5,6,.05) 62%), linear-gradient(90deg, rgba(5,5,6,.35), transparent 70%); }
+  .world[data-w='servis'] .world__media { filter: grayscale(.4) contrast(1.1) brightness(.92); }
+  .world[data-w='servis'] .world__tone { background: linear-gradient(0deg, rgba(4,8,12,.92), rgba(6,10,16,.25) 70%), rgba(10,18,28,.28); }
+  .world[data-w='detailing'] .world__media { filter: saturate(1.1) contrast(1.04); }
+  .world__ticks i { position: absolute; width: 26px; height: 26px; border: 0 solid rgba(255,255,255,.7); }
+  .world__ticks i:nth-child(1) { top: calc(var(--header-h) + 18px); left: var(--gutter); border-width: 1px 0 0 1px; }
+  .world__ticks i:nth-child(2) { top: calc(var(--header-h) + 18px); right: var(--gutter); border-width: 1px 1px 0 0; }
+  .world__ticks i:nth-child(3) { bottom: 22px; left: var(--gutter); border-width: 0 0 1px 1px; }
+  .world__ticks i:nth-child(4) { bottom: 22px; right: var(--gutter); border-width: 0 1px 1px 0; }
+  .world__sweep { position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(100deg, transparent 38%, rgba(255,255,255,.3) 50%, transparent 62%); mix-blend-mode: soft-light; opacity: 0; }
 
-  .portal-list { width: 100%; max-width: 1420px; margin-left: auto; border-top: 1px solid rgba(255,255,255,.46); }
-  .portal { position: relative; display: grid; grid-template-columns: minmax(250px,1fr) minmax(210px,.52fr) 48px; align-items: center; gap: clamp(16px,3vw,55px); min-height: clamp(126px,21vh,192px); border-bottom: 1px solid rgba(255,255,255,.38); outline: none; }
-  .portal::before { content: ''; position: absolute; inset: 0 -18px; z-index: -1; background: #ece9e2; transform: scaleY(0); transform-origin: bottom; transition: transform .42s cubic-bezier(.76,0,.24,1); }
-  .portal-title { font-family: 'Avenir Next Condensed','DIN Condensed','Helvetica Neue',sans-serif; font-size: clamp(58px,8vw,132px); font-weight: 800; letter-spacing: -.06em; line-height: .85; text-transform: uppercase; transition: transform .4s ease, color .25s ease; }
-  .portal-description { max-width: 340px; color: rgba(255,255,255,.72); font-size: clamp(11px,1vw,15px); line-height: 1.55; transition: color .25s ease; }
-  .portal-arrow { display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgba(255,255,255,.46); transition: border-color .25s, color .25s, transform .35s; }
-  .portal:hover::before, .portal:focus-visible::before { transform: scaleY(1); }
-  .portal:hover .portal-title, .portal:focus-visible .portal-title { color: #0b0b0b; transform: translateX(7px); }
-  .portal:hover .portal-description, .portal:focus-visible .portal-description { color: #424242; }
-  .portal:hover .portal-arrow, .portal:focus-visible .portal-arrow { color: var(--red); border-color: var(--red); transform: rotate(45deg); }
+  .world__copy { display: grid; gap: clamp(14px, 2.2vh, 26px); padding-top: calc(var(--header-h) + 30px); padding-bottom: clamp(40px, 8vh, 90px); }
+  .world__idx { display: flex; gap: 10px; align-items: baseline; color: rgba(255,255,255,.8); }
+  .world__idx b { color: #fff; font-size: 15px; }
+  .world__idx em { margin-left: 14px; font-style: normal; color: #fff; }
+  .world__idx em::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 10px; background: var(--red); }
+  .world__title { font-size: clamp(76px, 25vw, 150px); line-height: .84; }
+  .world__title a { display: block; }
+  .world__title .ln { display: block; overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
+  .world__title .ln > span { display: block; }
+  .world[data-w='servis'] .world__title, .world[data-w='detailing'] .world__title { font-size: clamp(56px, 17vw, 120px); }
+  .world__row { display: grid; gap: 22px; padding-top: clamp(14px, 2.4vh, 28px); border-top: 1px solid rgba(255,255,255,.3); }
+  .world__statement { max-width: 36ch; font-size: clamp(17px, 1.6vw, 22px); line-height: 1.4; color: rgba(255,255,255,.92); }
+  .world__side { display: grid; gap: 18px; justify-items: start; }
+  .world__tags { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 600 13px var(--f-display); letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.7); }
+  .hub__nav { display: none; }
 
-  @media (max-width: 980px) {
-    .site-header { grid-template-columns: 1fr 1fr; }
-    .header-note { display: none; }
-    .portal-home { padding-top: 140px; }
-    .portal { grid-template-columns: minmax(220px,1fr) minmax(150px,.65fr) 40px; min-height: 125px; }
-    .portal-title { font-size: clamp(52px,8.5vw,82px); }
+  /* hub — pinned cinematic stage (desktop, motion allowed) */
+  .hub.is-pinned { height: 420vh; }
+  .hub.is-pinned .hub__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+  .hub.is-pinned .world { position: absolute; inset: 0; min-height: 0; overflow: hidden; }
+  .hub.is-pinned .world:nth-of-type(2) { z-index: 2; }
+  .hub.is-pinned .world:nth-of-type(3) { z-index: 3; }
+  .hub.is-pinned .world {
+    clip-path: inset(calc((1 - var(--in, 1)) * 100%) 0 0 0);
   }
-  @media (max-width: 600px) {
-    .site-header { height: 76px; padding-inline: 18px; }
-    .brand img { width: 66px; }
-    .header-contact span { display: none; }
-    .portal-home { padding: 115px 18px 24px; }
-    .portal { grid-template-columns: 1fr 34px; gap: 13px; min-height: clamp(130px,21svh,168px); }
-    .portal::before { inset: 0 -8px; }
-    .portal-title { grid-column: 1; align-self: end; font-size: clamp(44px,12.5vw,68px); }
-    .portal-description { grid-column: 1; grid-row: 2; align-self: start; font-size: 11px; line-height: 1.45; }
-    .portal-arrow { grid-column: 2; grid-row: 1 / 3; align-self: center; width: 34px; height: 34px; }
+  /* image: rises with the wipe, settles from a wider lens; outgoing image sinks and darkens */
+  .hub.is-pinned .world__media { transform: translate3d(0, calc((1 - var(--in, 1)) * 10% - var(--out, 0) * 5%), 0) scale(calc(1.02 + (1 - var(--in, 1)) * .18 + var(--out, 0) * .08)); will-change: transform; }
+  .hub.is-pinned .world::after { content: ''; position: absolute; inset: 0; z-index: -1; background: #000; opacity: calc(var(--out, 0) * .6); pointer-events: none; }
+  .hub.is-pinned .world__idx { opacity: calc(clamp(0, (var(--in, 1) - .3) * 2, 1) * (1 - clamp(0, var(--out, 0) * 3, 1))); }
+  .hub.is-pinned .world__title .ln > span { transform: translate3d(0, calc((1 - clamp(0, (var(--in, 1) - var(--lag, 0)) / (1 - var(--lag, 0)), 1)) * 108% - var(--out, 0) * 112%), 0); }
+  .hub.is-pinned .world__row {
+    opacity: calc(clamp(0, (var(--in, 1) - .55) * 2.4, 1) * (1 - clamp(0, var(--out, 0) * 3, 1)));
+    transform: translate3d(0, calc((1 - clamp(0, (var(--in, 1) - .5) * 2, 1)) * 36px - var(--out, 0) * 30px), 0);
   }
-  @media (max-width: 360px) {
-    .portal-title { font-size: 42px; }
-    .portal { min-height: 125px; }
-    .portal-description { font-size: 10px; }
+  .hub.is-pinned .world__title { font-size: clamp(120px, 24vw, 430px); }
+  .hub.is-pinned .world[data-w='servis'] .world__title, .hub.is-pinned .world[data-w='detailing'] .world__title { font-size: clamp(90px, 13.4vw, 250px); }
+  .hub.is-pinned .world__copy { position: absolute; inset: 0; align-content: end; padding-bottom: clamp(28px, 6vh, 64px); }
+  .hub.is-pinned .world__row { grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 6vw; }
+  .hub.is-pinned .world__side { justify-items: end; text-align: right; }
+  .hub.is-pinned .world__tags { justify-content: flex-end; }
+  .hub.is-pinned .world__sweep { opacity: 1; transform: translate3d(calc((var(--s, 0) - 2.3) * 150%), 0, 0); }
+
+  .hub.is-pinned .hub__nav { display: grid; gap: 6px; position: absolute; z-index: 10; right: var(--gutter); top: 50%; transform: translateY(-50%); padding-right: 18px; text-align: right; }
+  .hub__nav a { display: flex; justify-content: flex-end; gap: 12px; padding: 8px 0; font: 600 14px var(--f-display); letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.55); transition: color .3s, transform .5s var(--ease); }
+  .hub__nav a b { font-weight: 600; }
+  .hub__nav a[aria-current] { color: #fff; transform: translateX(-8px); }
+  .hub__nav a[aria-current] b { color: var(--red); }
+  .hub__nav a:hover { color: #fff; }
+  .hub__bar { position: absolute; right: 0; top: 4px; bottom: 4px; width: 1px; background: rgba(255,255,255,.3); }
+  .hub__bar i { position: absolute; inset: 0; background: #fff; transform-origin: top; transform: scaleY(var(--p, 0)); }
+
+  /* manifest */
+  .manifest { display: grid; grid-template-columns: 1fr; gap: 60px; padding-block: clamp(90px, 14vw, 220px); background: var(--paper); color: var(--ink); }
+  .manifest__text { display: grid; gap: 26px; align-content: start; }
+  .manifest h2 { max-width: 14ch; }
+  .manifest__stack { position: relative; min-height: 120vw; }
+  .manifest__stack .frame { position: absolute; }
+  .m1 { width: 56%; aspect-ratio: 3/4; left: 0; top: 0; }
+  .m2 { width: 62%; aspect-ratio: 4/3; right: 0; top: 38%; }
+  .m3 { width: 44%; aspect-ratio: 3/4; left: 8%; bottom: 0; }
+  .manifest__stack :global([data-parallax]) { inset: -10% 0; height: 120%; }
+  @media (min-width: 900px) {
+    .manifest { grid-template-columns: .9fr 1.1fr; gap: 8vw; align-items: start; }
+    .manifest__text { position: sticky; top: calc(var(--header-h) + 60px); }
+    .manifest__stack { min-height: 78vw; }
+    .m1 { width: 34%; }
+    .m2 { width: 52%; top: 22%; }
+    .m3 { width: 30%; left: 18%; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .portal-bg.is-active { animation: none; }
-    .portal-bg, .portal::before, .portal-title, .portal-description, .portal-arrow { transition: none; }
-  }
+
+  /* feature */
+  .feature { background: var(--paper); padding-bottom: 0; --e: clamp(0, (var(--p, 0) - .12) * 3.2, 1); }
+  .feature__frame { position: relative; display: block; height: 100svh; min-height: 560px; overflow: hidden; color: #fff; clip-path: inset(calc((1 - var(--e)) * 12%) calc((1 - var(--e)) * 7%) 0 calc((1 - var(--e)) * 7%)); }
+  :global(.rm) .feature__frame { clip-path: none; }
+  .feature__frame :global(img) { transition: transform 2s var(--ease); }
+  .feature__frame:hover :global(img) { transform: scale(1.03); }
+  .feature__shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,5,6,.85), transparent 55%); }
+  .feature__copy { position: absolute; inset: auto 0 0; display: grid; gap: 14px; justify-items: start; padding-bottom: clamp(30px, 6vh, 70px); }
+  .feature__meta { max-width: 52ch; color: rgba(255,255,255,.85); }
 </style>

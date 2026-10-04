@@ -1,0 +1,37 @@
+---
+import {u} from '../lib/url'
+import {worlds, contact, type WorldKey} from '../data/site'
+import {getContent} from '../lib/content'
+
+const {world, over = true} = Astro.props as {world?: WorldKey; over?: boolean}
+const {services} = await getContent()
+---
+<header class="site-header" data-over={over ? '' : undefined}>
+  <a class="brand" href={u('/')} aria-label="Mužíček — úvodní stránka"><span class="brand__mark" style={`--mark:url('${u('/images/muzicek-mark.png')}')`}></span></a>
+  <nav class="worlds-nav" aria-label="Tři světy Mužíček">
+    {worlds.map((w) => <a href={u(w.href)} aria-current={w.key === world ? 'page' : undefined}><i class="num">{w.num}</i>{w.label}</a>)}
+  </nav>
+  <nav class="aux-nav" aria-label="Další stránky">
+    <a href={u('/realizace/')}>Realizace</a>
+    <a href="#kontakt">Kontakt</a>
+  </nav>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu"><span data-label>Menu</span><i aria-hidden="true"></i></button>
+</header>
+
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Navigace" inert>
+  <div class="menu__worlds">
+    {worlds.map((w) => (
+      <div class="menu__world">
+        <a href={u(w.href)}><b class="num">{w.num}</b><span>{w.label}</span></a>
+        <ul>
+          {services.filter((s) => s.area === w.key).map((s) => <li><a href={u(`/${w.key}/${s.slug}/`)}>{s.title}</a></li>)}
+          {w.key === 'auta' && <li><a href={u('/auta/vozy/')}>Vozy v nabídce</a></li>}
+        </ul>
+      </div>
+    ))}
+  </div>
+  <div class="menu__foot">
+    <nav aria-label="Ostatní"><a href={u('/realizace/')}>Realizace</a><a href={u('/')}>Rozcestník</a></nav>
+    <p>{contact.street}, {contact.city} · {contact.hours}<br /><a href={contact.phoneHref}>{contact.phone}</a> · <a href={`mailto:${contact.email}`}>{contact.email}</a></p>
+  </div>
+</div>

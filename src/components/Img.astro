@@ -1,0 +1,24 @@
+---
+import images from '../data/images.json'
+import {u} from '../lib/url'
+
+type Props = {id: string; alt?: string; sizes?: string; class?: string; eager?: boolean; priority?: boolean; pos?: string; style?: string}
+const {id, alt = '', sizes = '100vw', class: cls, eager = false, priority = false, pos, style = '', ...rest} = Astro.props as Props & Record<string, unknown>
+const meta = (images as Record<string, {w: number; h: number; c: string; max: number}>)[id]
+if (!meta) throw new Error(`Unknown image id: ${id}`)
+const srcset = `${u(`/img/${id}-800.webp`)} 800w, ${u(`/img/${id}-1600.webp`)} ${meta.max}w`
+---
+<img
+  class={cls}
+  src={u(`/img/${id}-1600.webp`)}
+  srcset={meta.max > 800 ? srcset : undefined}
+  sizes={sizes}
+  width={meta.w}
+  height={meta.h}
+  alt={alt}
+  loading={eager || priority ? 'eager' : 'lazy'}
+  fetchpriority={priority ? 'high' : undefined}
+  decoding="async"
+  {...rest}
+  style={`background:${meta.c};${pos ? `object-position:${pos};` : ''}${style}`}
+/>

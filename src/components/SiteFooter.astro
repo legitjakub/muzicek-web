@@ -1,11 +1,33 @@
 ---
-const {section = ''} = Astro.props as {section?: string}
+import {u} from '../lib/url'
+import {worlds, contact} from '../data/site'
 ---
-<footer class="footer">
-  <div class="footer__inner page-width">
-    <div><div class="footer__brand">Mužíček{section ? ` ${section}` : ''}</div><p>Podzimní 10, Jablonec nad Nisou.<br/>Po–Pá 8:00–17:00.</p></div>
-    <nav aria-label="Kontakt"><a href="tel:+420775911005">+420 775 911 005</a><a href="mailto:info@muzicek.com">info@muzicek.com</a><span>Podzimní 10, Jablonec nad Nisou</span></nav>
-    <nav aria-label="Části webu"><a href="/auta/">Mužíček Auta</a><a href="/servis/">Mužíček Servis</a><a href="/detailing/">Mužíček Detailing</a><a href="/">Úvodní rozcestník</a></nav>
-    <div class="footer__meta"><span>© {new Date().getFullYear()} Mužíček</span><span>Po–Pá 8:00–17:00</span></div>
+<footer class="site-footer" id="kontakt">
+  <div class="site-footer__cols">
+    <div>
+      <h2>Ateliér</h2>
+      <p class="site-footer__lede">Vůz, práce a lidé, kteří za ní stojí.</p>
+    </div>
+    <div>
+      <h2>Navštivte nás</h2>
+      <address>{contact.street}<br />{contact.zip} {contact.city}<br />{contact.hours}</address>
+    </div>
+    <div>
+      <h2>Kontakt</h2>
+      <ul>
+        <li><a href={contact.phoneHref}>{contact.phone}</a></li>
+        <li><a href={`mailto:${contact.email}`}>{contact.email}</a></li>
+        <li><a href={contact.instagram} rel="noopener" target="_blank">Instagram</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Světy</h2>
+      <ul>
+        {worlds.map((w) => <li><a href={u(w.href)}>{w.num} · {w.label}</a></li>)}
+        <li><a href={u('/realizace/')}>Realizace</a></li>
+      </ul>
+    </div>
   </div>
+  <div class="site-footer__word" aria-hidden="true">Mužíček</div>
+  <div class="site-footer__meta"><span>© {new Date().getFullYear()} Mužíček</span><span>Jablonec nad Nisou</span></div>
 </footer>

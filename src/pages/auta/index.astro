@@ -1,0 +1,287 @@
+---
+import Base from '../../layouts/Base.astro'
+import Hero from '../../components/Hero.astro'
+import Img from '../../components/Img.astro'
+import InquiryForm from '../../components/InquiryForm.astro'
+import {u} from '../../lib/url'
+import {getContent, czk, km, statusLabel} from '../../lib/content'
+import {coverFor} from '../../data/vehicleMedia'
+
+const {areas, services, vehicles: all} = await getContent()
+const area = areas.find((a) => a.slug === 'auta')!
+const vehicles = all.filter((v) => v.status === 'available')
+const svc = (slug: string) => services.find((s) => s.slug === slug)!
+const paths = [
+  {s: svc('dovoz-vozidel'), img: 'gtr-nismo', alt: 'Nissan GT-R Nismo v hale Mužíček', cls: 'p1', pos: '50% 40%'},
+  {s: svc('prodej-vaseho-vozu'), img: 'rs4-3', alt: 'Audi RS4 Avant připravené k prezentaci', cls: 'p2', pos: '50% 55%'},
+  {s: svc('preprava-vozidel'), img: 'van-trailer', alt: 'Dodávka s krytým přívěsem Mužíček', cls: 'p3', pos: '50% 50%'},
+]
+const steps = [
+  {t: 'Zadání', x: 'Ujasníme typ vozu, rozpočet, termín a priority.'},
+  {t: 'Výběr a prověření', x: 'Porovnáme nabídky, historii a technický stav.'},
+  {t: 'Nákup a logistika', x: 'Převezmeme komunikaci, dokumenty a bezpečnou dopravu.'},
+  {t: 'Předání', x: 'Vůz i dokumentaci projdeme osobně, bez skrytých kroků.'},
+]
+const reel = [
+  {id: 'gtr-nismo', n: 'Nissan GT-R Nismo', c: 'tall'}, {id: 'merak', n: 'Maserati Merak', c: 'tall'}, {id: 'aston-vanquish', n: 'Aston Martin Vanquish', c: 'tall'},
+  {id: 'escort', n: 'Ford Escort', c: 'tall'}, {id: 'impreza', n: 'Subaru Impreza Prodrive', c: 'tall'}, {id: 'amg-gt-yellow', n: 'Mercedes-AMG GT', c: 'tall'}, {id: 'alfa-4c', n: 'Alfa Romeo 4C', c: 'tall'},
+]
+const n = vehicles.length
+const spec = (v: (typeof vehicles)[number]) => [['Rok', v.year], ['Nájezd', km(v.mileage)], ['Výkon', v.power], ['Převodovka', v.transmission], ['Palivo', v.fuel], ['Pohon', v.drivetrain]].filter(([, x]) => x)
+---
+<Base
+  world="auta"
+  title="Mužíček Auta — dovoz, prodej a krytá přeprava vozidel"
+  description={area.heroText ?? area.shortDescription}
+  image="rs4-2"
+>
+  <link slot="head" rel="preload" as="image" href={u('/img/rs4-2-1600.webp')} imagesrcset={`${u('/img/rs4-2-800.webp')} 800w, ${u('/img/rs4-2-1600.webp')} 1600w`} imagesizes="100vw" fetchpriority="high" />
+
+  <Hero
+    world="auta" num="01" kicker="Auta" image="rs4-2" pos="50% 62%" alt="Audi RS4 Avant v showroomu Mužíček"
+    title={['Od výběru vozu', 'po předání klíčů.']}
+    lede="Vybereme vhodné nabídky, ověříme historii a technický stav a zařídíme dopravu i registraci. Stejně pečlivě připravíme váš vůz k prodeji."
+    actions={[{label: 'Vozy v nabídce', href: '#vozy'}, {label: 'Dovoz na zakázku', href: '/auta/dovoz-vozidel/'}]}
+    caption={{text: 'Audi RS4 Avant — v nabídce', href: '/auta/vozy/audi-rs4/'}}
+  />
+
+  <!-- editorial statement: words light up as it passes -->
+  <section class="statement wrap" aria-label="Přístup">
+    <p class="label" data-reveal="fade">Fakta před dojmem</p>
+    <p class="serif statement__text" data-wordscrub>Každý vůz má jiný příběh. Způsob práce zůstává stejný: znát fakta a nic neskrývat.</p>
+  </section>
+
+  <!-- SIGNATURE: the showroom sequence -->
+  <section class="showroom" id="vozy" data-showroom style={`--n:${Math.max(n, 1)}`} aria-label="Vozy v nabídce">
+    <div class="showroom__stage">
+      <div class="showroom__head wrap">
+        <p class="label">Aktuálně v nabídce <b class="num">· {n}</b></p>
+        <a class="link" href={u('/auta/vozy/')}>Celá nabídka</a>
+      </div>
+      {n === 0 && <p class="wrap showroom__empty serif t-m">Aktuálně nemáme vůz v nabídce. Napište nám, co hledáte — rádi jej pro vás najdeme.</p>}
+      {vehicles.map((v, i) => (
+        <article class="car" data-state={i} aria-labelledby={`car-${v.slug}`}>
+          <a class="car__img" href={u(`/auta/vozy/${v.slug}/`)} tabindex="-1" aria-hidden="true"><Img id={coverFor(v.slug) ?? 'rs4-1'} class="cover" alt="" sizes="(min-width: 900px) 62vw, 100vw" eager={i === 0} /></a>
+          <div class="car__info wrap">
+            <p class="car__idx label"><b class="num">{String(i + 1).padStart(2, '0')}</b> / {String(n).padStart(2, '0')} · {statusLabel(v.status)}</p>
+            <h3 class="serif car__name" id={`car-${v.slug}`}><a href={u(`/auta/vozy/${v.slug}/`)}>{v.title}</a></h3>
+            <p class="car__sub">{v.subtitle?.replaceAll(' · ', ', ')}</p>
+            <dl class="car__spec">{spec(v).map(([k, x]) => <div><dt>{k}</dt><dd class="num">{x}</dd></div>)}</dl>
+            <div class="car__buy">
+              <p class="car__price display num">{czk(v.price)}</p>
+              <a class="link" href={u(`/auta/vozy/${v.slug}/`)}>Detail vozu</a>
+            </div>
+          </div>
+        </article>
+      ))}
+      {n > 1 && <ol class="showroom__ticks wrap" aria-label="Přepnout vůz">{vehicles.map((v, i) => <li><a href={`#car-${v.slug}`} data-k={i} aria-label={v.title}><b class="num">{String(i + 1).padStart(2, '0')}</b><i></i></a></li>)}</ol>}
+    </div>
+  </section>
+
+  <!-- three routes: asymmetric editorial rows, not cards -->
+  <section class="paths" aria-labelledby="paths-title">
+    <header class="paths__head wrap">
+      <p class="label" data-reveal="fade">Tři cesty k vozu</p>
+      <h2 id="paths-title" class="serif t-xl" data-split>Co s vozem<br />potřebujete?</h2>
+    </header>
+    {paths.map((p, i) => (
+      <article class:list={['path', p.cls]}>
+        <a class="path__img frame" href={u(`/auta/${p.s.slug}/`)} data-reveal="mask" data-parallax-host tabindex="-1" aria-hidden="true"><Img id={p.img} class="cover" alt="" pos={p.pos} sizes="(min-width: 900px) 48vw, 100vw" data-parallax="0.07" /></a>
+        <div class="path__body">
+          <p class="path__num serif num" aria-hidden="true">0{i + 1}</p>
+          <h3 class="serif t-l" data-split><a href={u(`/auta/${p.s.slug}/`)}>{p.s.title}</a></h3>
+          <p class="path__sum" data-reveal="up">{p.s.summary}</p>
+          <ul class="path__list" data-stagger>{p.s.benefits?.map((b) => <li>{b}</li>)}</ul>
+          <a class="link" href={u(`/auta/${p.s.slug}/`)} data-reveal="up">Jak to probíhá</a>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <!-- large visual interruption: the frame opens as it scrolls in -->
+  <section class="open" data-progress aria-label="Předání vozu">
+    <div class="open__frame">
+      <Img id="m3-cover" class="cover" alt="BMW M3 pod ochrannou plachtou Mužíček v hale" pos="50% 30%" sizes="100vw" />
+      <div class="open__shade"></div>
+      <div class="open__copy wrap">
+        <p class="label">Předání</p>
+        <p class="serif t-xl" data-split>Vůz předáváme osobně, s dokumentací a bez skrytých kroků.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- process: a line that draws as you read -->
+  <section class="process wrap" aria-labelledby="process-title">
+    <header>
+      <p class="label" data-reveal="fade">Postup dovozu</p>
+      <h2 id="process-title" class="serif t-l" data-split>Od zadání k předání vozu.</h2>
+    </header>
+    <ol class="steps" data-progress>
+      {steps.map((s, i) => (
+        <li class="step" style={`--i:${i}`}>
+          <span class="step__n serif num" aria-hidden="true">{i + 1}</span>
+          <h3 class="step__t">{s.t}</h3>
+          <p>{s.x}</p>
+        </li>
+      ))}
+      <li class="steps__line" aria-hidden="true"><i></i></li>
+    </ol>
+  </section>
+
+  <!-- real cars from the hall: pinned horizontal sequence on desktop, native swipe on phones -->
+  <section class="reel" data-hscroll aria-labelledby="reel-title">
+    <div class="reel__stage">
+      <div class="reel__rail" data-rail>
+        <div class="reel__intro">
+          <p class="label">Reference</p>
+          <h2 id="reel-title" class="serif t-l">Vozy, které prošly Mužíčkem.</h2>
+          <p class="mute">Každý má jiný příběh, jinou techniku a jiné nároky.</p>
+        </div>
+        {reel.map((r, i) => (
+          <figure class:list={['reel__item', `r${i % 3}`]}>
+            <Img id={r.id} alt={r.n} class="reel__img" sizes="(min-width: 900px) 34vh, 70vw" />
+            <figcaption class="cap"><b class="num">{String(i + 1).padStart(2, '0')}</b> {r.n}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- focused conversion -->
+  <section class="contact wrap" aria-labelledby="contact-title">
+    <header>
+      <p class="label" data-reveal="fade">Máte konkrétní vůz nebo teprve hledáte?</p>
+      <h2 id="contact-title" class="serif t-xl" data-split>Začněme zadáním.</h2>
+    </header>
+    <InquiryForm area="auta" />
+  </section>
+
+  <script>
+    import {states, whenPinned, stateTop} from '../../scripts/core'
+    const show = document.querySelector<HTMLElement>('[data-showroom]')
+    const cars = show ? [...show.querySelectorAll<HTMLElement>('.car')] : []
+    if (show && cars.length) {
+      const ticks = [...show.querySelectorAll<HTMLAnchorElement>('.showroom__ticks a')]
+      const mark = (i: number) => {
+        cars.forEach((c, k) => c.querySelector('.car__info')!.toggleAttribute('inert', k !== i))
+        ticks.forEach((t, k) => (k === i ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current')))
+      }
+      ticks.forEach((t, k) => t.addEventListener('click', (e) => {
+        e.preventDefault()
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+        if (show.classList.contains('is-pinned')) scrollTo({top: stateTop(show, k, cars.length), behavior: reduce ? 'auto' : 'smooth'})
+        else cars[k].scrollIntoView({behavior: reduce ? 'auto' : 'smooth'})
+      }))
+      if (cars.length > 1) whenPinned(() => {
+        const stop = states(show, {n: cars.length, w: 0.2, onIndex: mark})
+        return () => { stop(); cars.forEach((c) => c.querySelector('.car__info')!.removeAttribute('inert')); ticks.forEach((t) => t.removeAttribute('aria-current')) }
+      })
+    }
+  </script>
+</Base>
+
+<style>
+  .statement { display: grid; gap: 28px; padding-block: clamp(110px, 17vw, 270px) clamp(70px, 10vw, 150px); }
+  .statement__text { max-width: 19ch; font-size: clamp(40px, 7.4vw, 136px); line-height: .98; }
+
+  /* showroom — stacked by default */
+  .showroom__head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; padding-block: 0 22px; border-bottom: 1px solid var(--line); margin-inline: var(--gutter); padding-inline: 0; }
+  .showroom__stage { padding-top: 10px; }
+  .car { display: grid; gap: 22px; padding-block: 26px 40px; }
+  .car__img { position: relative; display: block; aspect-ratio: 3 / 2; overflow: hidden; background: #ddd; }
+  .car__info { display: grid; gap: 14px; }
+  .car__name { font-size: clamp(40px, 11vw, 64px); }
+  .car__sub { color: var(--mute); }
+  .car__spec { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; border-top: 1px solid var(--line); }
+  .car__spec div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .car__spec dt { color: var(--mute); }
+  .car__buy { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 14px; padding-top: 8px; }
+  .car__price { font-size: clamp(34px, 8vw, 56px); }
+  .showroom__ticks { display: none; }
+  .showroom__empty { padding-block: 80px; }
+
+  /* showroom — pinned, scroll-driven sequence */
+  .showroom.is-pinned { height: calc(var(--n) * 92vh + 40vh); }
+  .showroom.is-pinned .showroom__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; padding: 0; }
+  .showroom.is-pinned .showroom__head { position: absolute; z-index: 5; top: calc(var(--header-h) + 14px); left: 0; right: 0; margin: 0; padding-inline: var(--gutter); border: 0; pointer-events: none; }
+  .showroom.is-pinned .showroom__head a { pointer-events: auto; }
+  .showroom.is-pinned .car { position: absolute; inset: 0; display: block; padding: 0; }
+  .showroom.is-pinned .car:nth-of-type(2) { z-index: 2; } .showroom.is-pinned .car:nth-of-type(3) { z-index: 3; } .showroom.is-pinned .car:nth-of-type(4) { z-index: 4; } .showroom.is-pinned .car:nth-of-type(5) { z-index: 5; }
+  .showroom.is-pinned .car__img { position: absolute; inset: 0 0 0 38%; aspect-ratio: auto; clip-path: inset(0 0 0 calc((1 - var(--in, 1)) * 100%)); }
+  .showroom.is-pinned .car__img :global(img) { transform: translate3d(calc((1 - var(--in, 1)) * 9% - var(--out, 0) * 3%), 0, 0) scale(calc(1.04 + var(--out, 0) * .05)); }
+  .showroom.is-pinned .car__info { position: absolute; z-index: 2; inset: calc(var(--header-h) + 70px) 62% 64px 0; align-content: center; gap: 16px; padding-right: 0; opacity: calc(clamp(0, (var(--in, 1) - .5) * 2.4, 1) * (1 - clamp(0, var(--out, 0) * 3, 1))); transform: translate3d(0, calc((1 - clamp(0, (var(--in, 1) - .4) * 1.8, 1)) * 40px - var(--out, 0) * 36px), 0); }
+  .showroom.is-pinned .car__name { font-size: clamp(40px, 4.8vw, 84px); }
+  .showroom.is-pinned .car__spec { grid-template-columns: 1fr 1fr; }
+  .showroom.is-pinned .car__price { font-size: clamp(34px, 3.4vw, 58px); }
+  .showroom.is-pinned .showroom__ticks { position: absolute; z-index: 6; left: 0; bottom: 24px; display: flex; gap: 14px; }
+  .showroom__ticks a { display: grid; gap: 6px; width: 54px; font: 600 12px var(--f-display); letter-spacing: .14em; color: var(--mute); }
+  .showroom__ticks i { height: 2px; background: var(--line); position: relative; }
+  .showroom__ticks i::after { content: ''; position: absolute; inset: 0; background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
+  .showroom__ticks a[aria-current] { color: var(--fg); }
+  .showroom__ticks a[aria-current] i::after { transform: scaleX(1); }
+  @media (max-width: 1100px) and (min-width: 900px) { .showroom.is-pinned .car__img { inset-left: 44%; left: 44%; } .showroom.is-pinned .car__info { right: 58%; } }
+
+  /* paths */
+  .paths { padding-block: clamp(80px, 12vw, 180px); }
+  .paths__head { display: grid; gap: 18px; margin-bottom: clamp(50px, 8vw, 120px); }
+  .path { display: grid; gap: 28px; padding: 0 var(--gutter); margin-bottom: clamp(70px, 10vw, 150px); }
+  .path__img { display: block; aspect-ratio: 4 / 5; }
+  .path__body { display: grid; gap: 22px; align-content: center; }
+  .path__num { font-size: clamp(60px, 9vw, 150px); color: var(--red); line-height: .8; }
+  .path__sum { max-width: 42ch; font-size: clamp(17px, 1.4vw, 21px); }
+  .path__list { display: grid; gap: 0; border-top: 1px solid var(--line); max-width: 46ch; }
+  .path__list li { padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .path__list li::before { content: '—'; margin-right: 12px; color: var(--red); }
+  @media (min-width: 900px) {
+    .path { grid-template-columns: repeat(12, 1fr); gap: 0 clamp(20px, 3vw, 48px); align-items: center; }
+    .p1 .path__img { grid-column: 1 / 6; aspect-ratio: 4 / 5.2; } .p1 .path__body { grid-column: 7 / 13; }
+    .p2 .path__img { grid-column: 6 / 13; aspect-ratio: 3 / 2; grid-row: 1; } .p2 .path__body { grid-column: 1 / 5; grid-row: 1; }
+    .p3 .path__img { grid-column: 2 / 9; aspect-ratio: 16 / 10; } .p3 .path__body { grid-column: 9 / 13; }
+    .p3 .path__body :global(h3) { font-size: clamp(36px, 4.4vw, 74px); }
+  }
+
+  /* open */
+  .open { --e: clamp(0, (var(--p, 0) - .1) * 2.6, 1); background: var(--bg); padding: 0; }
+  .open__frame { position: relative; height: 100svh; min-height: 560px; overflow: hidden; color: #fff; clip-path: inset(calc((1 - var(--e)) * 14%) calc((1 - var(--e)) * 10%)); }
+  :global(.rm) .open__frame { clip-path: none; }
+  .open__shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,5,6,.82), rgba(5,5,6,.05) 62%); }
+  .open__copy { position: absolute; inset: auto 0 0; display: grid; gap: 16px; padding-bottom: clamp(28px, 6vh, 70px); }
+  .open__copy .t-xl { max-width: 16ch; font-size: clamp(40px, 7vw, 124px); line-height: .96; }
+
+  /* process */
+  .process { display: grid; gap: 50px; padding-block: clamp(90px, 13vw, 200px); }
+  .process header { display: grid; gap: 16px; }
+  .steps { position: relative; display: grid; gap: 0; }
+  .step { display: grid; gap: 8px; padding: 26px 0 30px; border-top: 1px solid var(--line); }
+  .step__n { font-size: clamp(56px, 8vw, 120px); line-height: .8; color: var(--red); }
+  .step__t { font: 600 clamp(24px, 2.2vw, 34px)/1.05 var(--f-display); letter-spacing: .02em; text-transform: uppercase; }
+  .step p { max-width: 28ch; color: var(--mute); }
+  .steps__line { display: none; }
+  @media (min-width: 900px) {
+    .steps { grid-template-columns: repeat(4, 1fr); gap: 0 clamp(20px, 3vw, 50px); }
+    .step { border-top: 0; padding-top: 44px; }
+    .steps__line { display: block; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--line); }
+    .steps__line i { position: absolute; inset: 0; background: var(--red); transform-origin: left; transform: scaleX(clamp(0, (var(--p, 0) - .12) * 2.2, 1)); }
+    :global(.js:not(.rm)) .step { opacity: calc(.2 + clamp(0, (var(--p, 0) - .1 - var(--i) * .13) * 6, 1) * .8); }
+    .step::before { content: ''; position: absolute; top: -4px; width: 10px; height: 10px; background: var(--red); }
+  }
+
+  /* reel */
+  .reel { padding-block: clamp(40px, 6vw, 90px) 0; }
+  .reel__rail { display: flex; align-items: center; gap: clamp(20px, 3vw, 48px); padding: 0 var(--gutter) 40px; overflow-x: auto; scroll-snap-type: x proximity; }
+  .reel__intro { flex: 0 0 min(80vw, 520px); display: grid; gap: 18px; }
+  .reel__item { flex: 0 0 min(66vw, 340px); scroll-snap-align: start; }
+  .reel__item :global(img) { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+  .reel.is-pinned { padding: 0; }
+  .reel.is-pinned .reel__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: grid; align-items: center; }
+  .reel.is-pinned .reel__rail { overflow: visible; padding-bottom: 0; transform: translate3d(var(--hx, 0px), 0, 0); will-change: transform; width: max-content; }
+  .reel.is-pinned .reel__intro { flex-basis: min(34vw, 520px); padding-right: 4vw; }
+  .reel.is-pinned .reel__item { flex-basis: auto; }
+  .reel.is-pinned .reel__item :global(img) { height: min(64vh, 640px); width: auto; aspect-ratio: 3 / 4; }
+  .reel.is-pinned .r1 { align-self: flex-start; margin-top: 12vh; } .reel.is-pinned .r2 { align-self: flex-end; margin-bottom: 8vh; }
+
+  /* contact */
+  .contact { display: grid; gap: 50px; padding-block: clamp(90px, 13vw, 200px); border-top: 1px solid var(--line); }
+  .contact header { display: grid; gap: 18px; align-content: start; }
+  @media (min-width: 900px) { .contact { grid-template-columns: .9fr 1.1fr; gap: 8vw; } }
+</style>

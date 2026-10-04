@@ -8,7 +8,7 @@ const {area, service} = Astro.props as {area: string; service?: string}
   {area === 'servis' && <label>Co se s vozem děje?<textarea name="message" rows="4" placeholder="Popište problém, požadovanou práci nebo úpravu" required></textarea></label>}
   {area === 'detailing' && <label>Co chcete na voze řešit?<textarea name="message" rows="4" placeholder="Stav vozu, požadovaný výsledek a přibližný termín" required></textarea></label>}
   {area === 'auta' && <label>Vaše zpráva<textarea name="message" rows="4" placeholder="Rozpočet, termín a důležité požadavky"></textarea></label>}
-  <div class="inquiry__foot"><p>Po odeslání se otevře e-mail s předvyplněnou poptávkou. Zkontrolujte ji a odešlete přímo ze své pošty.</p><button class="button button--red" type="submit">Připravit poptávku</button></div>
+  <div class="inquiry__foot"><p>Po odeslání se otevře e-mail s předvyplněnou poptávkou. Zkontrolujte ji a odešlete přímo ze své pošty.</p><button class="btn" type="submit"><span>Připravit poptávku</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 12h17M14 6l6 6-6 6"/></svg></button></div>
 </form>
 <script>
   document.querySelectorAll<HTMLFormElement>('[data-inquiry]').forEach((form)=>form.addEventListener('submit',(event)=>{
@@ -20,5 +20,14 @@ const {area, service} = Astro.props as {area: string; service?: string}
   }))
 </script>
 <style>
-  .inquiry{display:grid;gap:22px}.inquiry__row{display:grid;grid-template-columns:1fr 1fr;gap:22px}.inquiry label{display:grid;gap:9px;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.inquiry input,.inquiry select,.inquiry textarea{width:100%;border:0;border-bottom:1px solid #777;border-radius:0;padding:13px 0;background:transparent;color:inherit;font-size:16px;font-weight:400;letter-spacing:0;text-transform:none;outline:none}.inquiry textarea{border:1px solid #777;padding:16px;resize:vertical}.inquiry input:focus,.inquiry select:focus,.inquiry textarea:focus{border-color:var(--red)}.inquiry__foot{display:flex;justify-content:space-between;align-items:center;gap:30px}.inquiry__foot p{max-width:430px;margin:0;color:#777;font-size:11px;line-height:1.55}.inquiry button{cursor:pointer}@media(max-width:620px){.inquiry__row{grid-template-columns:1fr}.inquiry__foot{align-items:flex-start;flex-direction:column-reverse}}
+  .inquiry { display: grid; gap: 26px; }
+  .inquiry__row { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .inquiry label { display: grid; gap: 4px; font: 600 13px var(--f-display); letter-spacing: .16em; text-transform: uppercase; color: var(--mute); }
+  .inquiry input, .inquiry select, .inquiry textarea { width: 100%; padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; color: var(--fg); font: 400 18px var(--f-body); letter-spacing: 0; text-transform: none; outline: none; transition: border-color .25s; }
+  .inquiry select option { color: #111; }
+  .inquiry textarea { resize: vertical; min-height: 120px; }
+  .inquiry input:focus, .inquiry select:focus, .inquiry textarea:focus { border-color: var(--red); }
+  .inquiry__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 22px 36px; padding-top: 6px; }
+  .inquiry__foot p { max-width: 44ch; font-size: 13px; line-height: 1.5; color: var(--mute); }
+  @media (max-width: 620px) { .inquiry__row { grid-template-columns: 1fr; } }
 </style>

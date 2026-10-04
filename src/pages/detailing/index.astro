@@ -1,0 +1,250 @@
+---
+import Base from '../../layouts/Base.astro'
+import Hero from '../../components/Hero.astro'
+import Img from '../../components/Img.astro'
+import FilmChapter from '../../components/FilmChapter.astro'
+import InquiryForm from '../../components/InquiryForm.astro'
+import {u} from '../../lib/url'
+import {getContent} from '../../lib/content'
+
+const {areas, services} = await getContent()
+const area = areas.find((a) => a.slug === 'detailing')!
+const meta: Record<string, {img: string; intent: string; pos?: string}> = {
+  ppf: {img: 'ppf-m3', intent: 'Ochránit'}, 'wrap-folie': {img: 'defender', intent: 'Změnit vzhled', pos: '50% 45%'},
+  'tonovani-skel': {img: 'tint-2', intent: 'Komfort a soukromí'}, 'cisteni-a-myti': {img: 'alfa-4c', intent: 'Udržovat', pos: '50% 55%'},
+  'lesteni-a-ochrana-laku': {img: 'amg-gt-yellow', intent: 'Obnovit', pos: '50% 55%'}, 'individualni-renovace': {img: 'merak', intent: 'Obnovit', pos: '50% 60%'},
+}
+const panels = services.filter((s) => s.area === 'detailing').map((s) => ({...s, ...meta[s.slug]}))
+const layers = [
+  {id: 'film-peel', t: 'Stahování ochranné vrstvy', alt: 'Ruce stahují fólii z lakovaného dílu vozu'},
+  {id: 'film-door', t: 'Fólie na dveřích', alt: 'Modrá fólie přiložená na dveře vozu'},
+  {id: 'ppf-door', t: 'Ruční aplikace po dílech', alt: 'Aplikace ochranné fólie na prah a dveře'},
+  {id: 'tint-2', t: 'Tónovací fólie na skle', alt: 'Vyhlazení tónovací fólie na bočním okně'},
+]
+const rs6Care = ['Dekontaminace a renovace laku', 'PPF full polep laku', 'PPF na přední sklo, displej a lakované díly interiéru', 'Keramická ochrana kol, třmenů a podběhů', 'Keramická ochrana skel']
+---
+<Base
+  world="detailing"
+  title="Mužíček Detailing — PPF, wrap, tónování, ochrana laku a renovace"
+  description={area.heroText ?? area.shortDescription}
+  image="ppf-door"
+>
+  <link slot="head" rel="preload" as="image" href={u('/img/ppf-door-1600.webp')} imagesrcset={`${u('/img/ppf-door-800.webp')} 800w, ${u('/img/ppf-door-1600.webp')} 1600w`} imagesizes="100vw" fetchpriority="high" />
+
+  <Hero
+    world="detailing" num="03" kicker="Detailing & Ochrana" image="ppf-door" pos="50% 45%" alt="Technik Mužíček ručně aplikuje ochrannou fólii na dveře vozu"
+    title={['Ochrana začíná', 'přípravou.']}
+    lede="PPF, wrap, lak, interiér i historické materiály. Nejdřív zkontrolujeme skutečný stav a teprve potom navrhneme rozsah práce."
+    actions={[{label: 'Vybrat službu', href: '#sluzby'}, {label: 'Poptat', href: '#poptavka'}]}
+    caption={{text: 'Profesionální detailing od roku 2014'}}
+  />
+
+  <!-- statement: narrow type + oversized image with a light pass -->
+  <section class="read" data-progress aria-labelledby="read-title">
+    <div class="read__text wrap">
+      <p class="label" data-reveal="fade">Nejdřív povrch přečíst</p>
+      <h2 id="read-title" class="display t-l" data-split>Stejný lesk neznamená stejný postup.</h2>
+      <p class="lede" data-reveal="up">Nový vůz, každodenní auto a veterán potřebují jinou přípravu, jinou technologii i jinou následnou péči. Rozhodujeme podle materiálu a skutečného stavu, ne podle univerzálního balíčku.</p>
+    </div>
+    <figure class="read__img frame" data-parallax-host>
+      <Img id="alfa-detail" class="cover" data-parallax="0.09" alt="Kontrola laku Alfa Romeo 4C v bočním světle" pos="50% 35%" sizes="(min-width: 900px) 62vw, 100vw" />
+      <span class="read__light" aria-hidden="true"></span>
+      <figcaption class="cap read__cap">Kontrola povrchu v bočním světle</figcaption>
+    </figure>
+  </section>
+
+  <!-- SIGNATURE: the film sequence — a surface wipe with a specular edge -->
+  <section class="film-seq" data-film-seq aria-labelledby="seq-title">
+    <div class="seq__stage">
+      {layers.map((l, i) => (
+        <div class="layer" data-state={i}>
+          <div class="layer__img"><Img id={l.id} class="cover" alt={l.alt} sizes="100vw" eager={i === 0} /></div>
+          <i class="layer__edge" aria-hidden="true"></i>
+        </div>
+      ))}
+      <div class="seq__shade" aria-hidden="true"></div>
+      <div class="seq__copy wrap">
+        <p class="label">Fólie · vrstva po vrstvě</p>
+        <h2 id="seq-title" class="display t-l">Fólie drží tak dobře, jak dobře je připravený povrch.</h2>
+        <ol class="seq__caps">
+          {layers.map((l, i) => <li data-state={i}><b class="num">0{i + 1}</b>{l.t}</li>)}
+        </ol>
+        <p class="seq__text">Před aplikací lak bezpečně vyčistíme a zkontrolujeme pod pracovním světlem. Fólii usazujeme po jednotlivých částech a hrany i napojení kontrolujeme ještě před předáním vozu.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- services: expanding strips, every one a real link -->
+  <section class="paths" id="sluzby" aria-labelledby="paths-title">
+    <header class="wrap">
+      <p class="label" data-reveal="fade">Péče podle cíle</p>
+      <h2 id="paths-title" class="display t-xl" data-split>Co chcete<br />na voze změnit?</h2>
+    </header>
+    <div class="strips">
+      {panels.map((p, i) => (
+        <a class="strip" href={u(`/detailing/${p.slug}/`)} data-reveal="up" style={`--delay:${i * 0.06}s`}>
+          <Img id={p.img} class="cover strip__img" alt="" pos={p.pos} sizes="(min-width: 900px) 40vw, 100vw" />
+          <span class="strip__shade"></span>
+          <span class="strip__n num">0{i + 1}</span>
+          <span class="strip__v display" aria-hidden="true">{p.intent}</span>
+          <span class="strip__body">
+            <span class="label strip__intent">{p.intent}</span>
+            <span class="display strip__t">{p.title}</span>
+            <span class="strip__s">{p.summary}</span>
+            <span class="link">Detail služby</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- real process film -->
+  <section class="process" data-progress="track" aria-labelledby="process-title">
+    <div class="process__stage wrap">
+      <div class="process__copy">
+        <p class="label">Skutečná práce v dílně</p>
+        <h2 id="process-title" class="display t-l">Ruce, světlo, trpělivost.</h2>
+        <ol class="process__steps">
+          <li><b class="num">01</b><span>Příprava a kontrola laku</span></li>
+          <li><b class="num">02</b><span>Přesná aplikace po dílech</span></li>
+          <li><b class="num">03</b><span>Kontrola hran a výsledku</span></li>
+        </ol>
+      </div>
+      <figure class="process__video frame">
+        <video muted loop playsinline preload="none" poster={u('/img/ppf-m3-800.webp')} aria-label="Ruční aplikace PPF fólie v dílně Mužíček" data-lazyvideo>
+          <source src={u('/media/process-960.mp4')} type="video/mp4" />
+        </video>
+        <figcaption class="cap">Aplikace PPF v dílně Mužíček</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- evidence -->
+  <section class="proof" aria-labelledby="proof-title">
+    <a class="proof__img" href={u('/realizace/audi-rs6/')} tabindex="-1" aria-hidden="true" data-reveal="mask"><Img id="rs6-2" class="cover" alt="" sizes="(min-width: 900px) 60vw, 100vw" /></a>
+    <div class="proof__copy">
+      <p class="label">Realizace</p>
+      <h2 id="proof-title" class="display t-l"><a href={u('/realizace/audi-rs6/')}>Audi RS6 Avant</a></h2>
+      <p class="proof__meta num">2021 · 4.0 TFSI V8 · 591 HP</p>
+      <ul class="proof__list" data-stagger>{rs6Care.map((c) => <li>{c}</li>)}</ul>
+      <a class="link" href={u('/realizace/audi-rs6/')}>Celý příběh realizace</a>
+    </div>
+  </section>
+
+  <FilmChapter videoId="GmGAPUCy2EU" kicker="Individuální renovace" title="Corvette ZR1 — zpět k původnímu lesku" text="Renovace, která stojí na čase, trpělivosti a síti ověřených specialistů." />
+
+  <section class="contact wrap" id="poptavka" aria-labelledby="contact-title">
+    <header>
+      <p class="label" data-reveal="fade">Nezávazná poptávka</p>
+      <h2 id="contact-title" class="display t-xl" data-split>Nejdřív se podíváme na vůz. Pak doporučíme další krok.</h2>
+    </header>
+    <InquiryForm area="detailing" />
+  </section>
+
+  <script>
+    import {states, whenPinned} from '../../scripts/core'
+    const seq = document.querySelector<HTMLElement>('[data-film-seq]')
+    if (seq) {
+      const n = seq.querySelectorAll('.layer').length
+      const caps = [...seq.querySelectorAll<HTMLElement>('.seq__caps li')]
+      whenPinned(() => states(seq, {n, w: 0.12, onIndex: (i) => caps.forEach((c, k) => c.classList.toggle('is-on', k === i))}))
+    }
+    const video = document.querySelector<HTMLVideoElement>('[data-lazyvideo]')
+    if (video && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) { video.preload = 'auto'; video.play().catch(() => {}) } else video.pause()
+        }
+      }, {threshold: 0.35}).observe(video)
+    } else if (video) video.controls = true
+  </script>
+</Base>
+
+<style>
+  .read { display: grid; background: var(--studio); }
+  .read__text { display: grid; gap: 24px; align-content: center; padding-block: clamp(70px, 11vw, 150px); }
+  .read__text h2 { max-width: 12ch; }
+  .read__img { min-height: 80svh; --e: clamp(0, var(--p, 0) * 2.4 - .3, 1); }
+  .read__light { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.34) 50%, transparent 62%); mix-blend-mode: soft-light; transform: translate3d(calc((var(--p, 0) - .5) * 260%), 0, 0); }
+  .read__cap { position: absolute; left: var(--gutter); bottom: 22px; color: #fff; }
+  @media (min-width: 900px) { .read { grid-template-columns: .38fr .62fr; } .read__img { min-height: 118svh; } .read__text { position: sticky; top: 0; height: 100svh; padding-block: var(--header-h) 40px; } }
+
+  /* film sequence — stacked fallback */
+  .film-seq { background: var(--graphite); color: #fff; }
+  .layer { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
+  .layer__edge, .seq__shade { display: none; }
+  .seq__copy { display: grid; gap: 22px; padding-block: 50px 80px; }
+  .seq__caps { display: grid; gap: 8px; font: 600 14px var(--f-display); letter-spacing: .14em; text-transform: uppercase; }
+  .seq__caps b { margin-right: 12px; color: var(--red); }
+  .seq__text { max-width: 52ch; color: rgba(255,255,255,.82); }
+  .film-seq.is-pinned { height: 440vh; }
+  .film-seq.is-pinned .seq__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+  .film-seq.is-pinned .layer { position: absolute; inset: 0; aspect-ratio: auto; clip-path: inset(0 0 0 calc((1 - var(--in, 1)) * 100%)); }
+  .film-seq.is-pinned .layer:nth-child(2) { z-index: 2; } .film-seq.is-pinned .layer:nth-child(3) { z-index: 3; } .film-seq.is-pinned .layer:nth-child(4) { z-index: 4; }
+  .film-seq.is-pinned .layer__img { position: absolute; inset: 0; transform: translate3d(calc((1 - var(--in, 1)) * 14%), 0, 0) scale(calc(1.04 + var(--out, 0) * .05)); }
+  .film-seq.is-pinned .layer__edge { display: block; position: absolute; z-index: 2; top: 0; bottom: 0; left: calc((1 - var(--in, 1)) * 100%); width: 3px; background: linear-gradient(180deg, transparent, #fff 20%, #fff 80%, transparent); box-shadow: 0 0 28px 6px rgba(255,255,255,.55); opacity: calc(var(--in, 1) * (1 - var(--in, 1)) * 4); }
+  .film-seq.is-pinned .seq__shade { display: block; position: absolute; inset: 0; z-index: 6; background: linear-gradient(0deg, rgba(6,8,10,.92), rgba(6,8,10,.05) 62%), linear-gradient(90deg, rgba(6,8,10,.5), transparent 60%); pointer-events: none; }
+  .film-seq.is-pinned .seq__copy { position: absolute; z-index: 7; inset: auto 0 0; padding-block: 0 clamp(28px, 6vh, 64px); display: grid; gap: 18px; }
+  .film-seq.is-pinned .seq__copy h2 { max-width: 15ch; font-size: clamp(40px, 6vw, 108px); }
+  .film-seq.is-pinned .seq__caps { grid-template-columns: repeat(4, 1fr); gap: 0 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.3); }
+  .film-seq.is-pinned .seq__caps li { opacity: .45; transition: opacity .5s; } .film-seq.is-pinned .seq__caps li.is-on { opacity: 1; }
+  .film-seq.is-pinned .seq__text { max-width: 60ch; font-size: 15px; }
+
+  /* strips */
+  .paths { padding-block: clamp(90px, 13vw, 200px) 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(40px, 6vw, 90px); }
+  .paths header { display: grid; gap: 16px; }
+  .strips { display: grid; background: var(--graphite); }
+  .strip { position: relative; display: grid; align-content: end; min-height: 62svh; padding: 26px var(--gutter); overflow: hidden; color: #fff; isolation: isolate; }
+  .strip__img { z-index: -2; filter: saturate(.9); transition: transform 1.4s var(--ease), filter .6s; }
+  .strip__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgba(6,8,10,.9), rgba(6,8,10,.1) 70%); }
+  .strip__n { position: absolute; top: 22px; left: var(--gutter); font: 600 14px var(--f-display); letter-spacing: .14em; }
+  .strip__v { display: none; }
+  .strip__body { display: grid; gap: 10px; justify-items: start; }
+  .strip__intent { color: rgba(255,255,255,.7); }
+  .strip__t { font-size: clamp(38px, 9vw, 64px); }
+  .strip__s { max-width: 40ch; color: rgba(255,255,255,.86); }
+  @media (min-width: 900px) {
+    .strips { display: flex; height: 88svh; min-height: 620px; }
+    .strip { flex: 1 1 0; min-width: 0; min-height: 0; padding: 30px 28px 34px; transition: flex-grow .9s var(--ease); border-left: 1px solid rgba(255,255,255,.12); }
+    .strip:first-child { border-left: 0; }
+    .strip__n { left: 28px; }
+    .strip__v { display: block; position: absolute; top: 80px; left: 28px; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 28px; letter-spacing: .06em; color: rgba(255,255,255,.75); transition: opacity .4s; }
+    .strip__body { width: min(36vw, 480px); opacity: 0; transform: translateY(26px); transition: opacity .5s var(--ease), transform .8s var(--ease); pointer-events: none; }
+    .strip__t { font-size: clamp(34px, 3.6vw, 62px); }
+    .strips:hover .strip, .strips:focus-within .strip { flex-grow: 1; }
+    .strip:hover, .strip:focus-visible, .strips:not(:hover):not(:focus-within) .strip:first-child { flex-grow: 5.2; }
+    .strip:hover .strip__body, .strip:focus-visible .strip__body, .strips:not(:hover):not(:focus-within) .strip:first-child .strip__body { opacity: 1; transform: none; pointer-events: auto; transition-delay: .25s; }
+    .strip:hover .strip__v, .strip:focus-visible .strip__v, .strips:not(:hover):not(:focus-within) .strip:first-child .strip__v { opacity: 0; }
+    .strip:hover .strip__img, .strip:focus-visible .strip__img { transform: scale(1.04); }
+  }
+
+  /* process film */
+  .process { background: var(--studio); height: auto; }
+  .process__stage { display: grid; gap: 40px; padding-block: clamp(80px, 11vw, 170px); align-items: center; }
+  .process__copy { display: grid; gap: 28px; }
+  .process__steps { display: grid; border-top: 1px solid var(--line); }
+  .process__steps li { display: flex; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--line); font: 600 clamp(20px, 2vw, 30px) var(--f-display); letter-spacing: .06em; text-transform: uppercase; }
+  .process__steps b { color: var(--red); font-size: .6em; padding-top: .5em; }
+  .process__video { width: min(100%, 380px); aspect-ratio: 9 / 16; justify-self: start; overflow: visible; }
+  .process__video video { width: 100%; height: 100%; object-fit: cover; background: #111; }
+  .process__video .cap { position: absolute; top: 100%; }
+  @media (min-width: 900px) {
+    .process__stage { grid-template-columns: 1fr 380px; gap: 10vw; justify-content: space-between; padding-block: 12vw; }
+    .process__video { justify-self: end; }
+  }
+
+  /* proof */
+  .proof { display: grid; background: var(--graphite); color: #fff; }
+  .proof__img { position: relative; display: block; min-height: 60svh; overflow: hidden; }
+  .proof__copy { display: grid; gap: 20px; align-content: center; justify-items: start; padding: 56px var(--gutter) 70px; }
+  .proof__meta { color: rgba(255,255,255,.7); font: 600 15px var(--f-display); letter-spacing: .14em; }
+  .proof__list { display: grid; width: 100%; max-width: 50ch; border-top: 1px solid rgba(255,255,255,.22); }
+  .proof__list li { padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.22); }
+  .proof__list li::before { content: '+'; margin-right: 12px; color: var(--red); }
+  @media (min-width: 900px) { .proof { grid-template-columns: 1.25fr .75fr; min-height: 100svh; } .proof__copy { padding: 8vw 5vw 8vw 4vw; } }
+
+  .contact { display: grid; gap: 50px; padding-block: clamp(90px, 13vw, 200px); }
+  .contact header { display: grid; gap: 18px; align-content: start; }
+  .contact h2 { max-width: 14ch; }
+  @media (min-width: 900px) { .contact { grid-template-columns: .95fr 1.05fr; gap: 8vw; } }
+</style>

@@ -1,0 +1,51 @@
+---
+import '../styles/global.css'
+import SiteHeader from '../components/SiteHeader.astro'
+import SiteFooter from '../components/SiteFooter.astro'
+import {u} from '../lib/url'
+import {contact, type WorldKey} from '../data/site'
+
+type Props = {title: string; description: string; world?: WorldKey; image?: string; footer?: boolean; over?: boolean; type?: string; jsonld?: object[]}
+const {title, description, world, image, footer = true, over = true, jsonld = []} = Astro.props as Props
+const canonical = Astro.site ? new URL(u(Astro.url.pathname), Astro.site).href : undefined
+const business = {
+  '@context': 'https://schema.org', '@type': 'AutomotiveBusiness', name: 'Mužíček', url: Astro.site?.href,
+  telephone: contact.phone, email: contact.email, openingHours: 'Mo-Fr 08:00-17:00',
+  address: {'@type': 'PostalAddress', streetAddress: contact.street, postalCode: contact.zip, addressLocality: contact.city, addressCountry: 'CZ'},
+}
+---
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="cs_CZ" />
+    {image && <meta property="og:image" content={new URL(u(`/img/${image}-1600.webp`), Astro.site ?? 'http://localhost').href} />}
+    <meta name="theme-color" content="#0b0b0c" />
+    <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml" />
+    <script is:inline>
+      (function () {
+        var r = document.documentElement
+        r.classList.add('js')
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) r.classList.add('rm')
+      })()
+    </script>
+    <slot name="head" />
+    <script type="application/ld+json" set:html={JSON.stringify(business)} />
+    {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+  </head>
+  <body data-world={world}>
+    <a class="skip" href="#main">Přejít na obsah</a>
+    <SiteHeader world={world} over={over} />
+    <main id="main"><slot /></main>
+    {footer && <SiteFooter />}
+    <script>
+      import '../scripts/core'
+    </script>
+  </body>
+</html>
