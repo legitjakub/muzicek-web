@@ -193,10 +193,20 @@ function boot() {
 
   const revealables = document.querySelectorAll<HTMLElement>('[data-split], [data-reveal], [data-stagger]')
   document.querySelectorAll<HTMLElement>('[data-stagger]').forEach((g) => [...g.children].forEach((c, i) => (c as HTMLElement).style.setProperty('--i', String(i))))
+  // Masked elements are observed through their parent: an element clipped to a sliver can't reliably report intersection itself.
+  const targets = new Map<Element, HTMLElement[]>()
+  revealables.forEach((el) => {
+    const t = (el.dataset.reveal || '').startsWith('mask') && el.parentElement ? el.parentElement : el
+    targets.set(t, [...(targets.get(t) ?? []), el])
+  })
   const io = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target) }
+    for (const e of entries) {
+      if (!e.isIntersecting && e.boundingClientRect.top > 0) continue
+      targets.get(e.target)?.forEach((el) => el.classList.add('is-in'))
+      io.unobserve(e.target)
+    }
   }, {threshold: 0, rootMargin: '0px 0px -9% 0px'})
-  revealables.forEach((el) => io.observe(el))
+  targets.forEach((_, t) => io.observe(t))
 
   // parallax: images that drift inside their mask
   document.querySelectorAll<HTMLElement>('[data-parallax]').forEach((el) => {

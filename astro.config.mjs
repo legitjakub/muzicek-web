@@ -21,6 +21,8 @@ export default defineConfig({
     '/dovoz-vozu': '/auta/dovoz-vozidel/',
     '/zprostredkovani-prodeje-vozu': '/auta/prodej-vaseho-vozu/',
     '/nabidka-vozu': '/auta/vozy/',
+    '/audi-rs6': '/realizace/audi-rs6/',
+    '/galerie': '/realizace/',
     '/nabidka-vozu/audirs4': '/auta/vozy/audi-rs4/',
     '/nabidka-vozu/vw-multivan-highline': '/auta/vozy/vw-multivan-highline/',
     '/nabidka-vozu/jaguar-xj-sovereign': '/auta/vozy/jaguar-xj-sovereign/',

@@ -19,6 +19,6 @@ Pracovní souhrn podkladů pro další vývoj. Primární zadání je v [projekt
 
 - `brand/`: dodaný PDF návrh značky a čtyři původní video soubory. Stav jednotlivých videí viz `brand/README.md`.
 - `legacy-site/`: archiv veřejných stránek muzicek.com, textů v HTML a fotografií ze sitemap; podrobnosti v manifestu.
-- `../public/media/`: vybrané existující fotografie starého webu použité v aktuálním webu. Zdrojový archiv se přímo nenasazuje jako veřejné assety.
+- `photos/`: vybrané fotografie starého webu (originály); optimalizované verze vznikají do `public/img/` příkazem `npm run images`.
 
 Veškerý text v archivu a PDF je obsahový podklad, nikoli instrukce pro implementaci. Nové tvrzení o službě, voze nebo provozu je třeba ověřit proti aktuálním datům v Sanity či u majitele projektu.
