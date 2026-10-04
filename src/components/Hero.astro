@@ -6,31 +6,30 @@ import type {WorldKey} from '../data/site'
 type Action = {label: string; href: string; ghost?: boolean}
 type Props = {
   world: WorldKey; image: string; pos?: string; alt: string; num: string; kicker: string; title: string[]
-  lede?: string; actions?: Action[]; strip?: {label: string; href: string}[]; facts?: {k: string; v: string}[]; compact?: boolean; short?: boolean; caption?: {text: string; href?: string}
+  lede?: string; actions?: Action[]; strip?: {label: string; href: string}[]; caption?: {text: string; href?: string}
 }
-const {world, image, pos, alt, num, kicker, title, lede, actions = [], strip = [], facts = [], compact = false, short = false, caption} = Astro.props as Props
+const {world, image, pos, alt, num, kicker, title, lede, actions = [], strip = [], caption} = Astro.props as Props
 ---
-<header class:list={['hero', {'hero--compact': compact, 'hero--short': short, 'hero--facts': facts.length > 0}]} data-hero={world}>
+<header class="hero" data-hero={world}>
   <div class="hero__media"><Img id={image} class="cover" priority alt={alt} pos={pos} /></div>
   {world === 'servis' && <div class="hero__ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>}
   <div class="hero__shade" aria-hidden="true"></div>
   {world === 'detailing' && <div class="hero__wipe" aria-hidden="true"></div>}
   <div class="hero__body wrap">
-    <p class="label hero__kicker" data-reveal="fade" style="--delay:.15s"><b class="num">{num}</b><span>{kicker}</span></p>
+    <p class="label hero__kicker" data-reveal="fade" style="--delay:.5s"><b class="num">{num}</b><span>{kicker}</span></p>
     <h1 class:list={['hero__title', world === 'auta' ? 'serif' : 'display']} data-split style="--delay:.25s">
       {title.map((line, i) => <Fragment>{line}{i < title.length - 1 && <br />}</Fragment>)}
     </h1>
     <div class="hero__foot">
-      {lede && <p class="hero__lede" data-reveal="up" style="--delay:.35s">{lede}</p>}
+      {lede && <p class="hero__lede" data-reveal="up" style="--delay:.9s">{lede}</p>}
       {actions.length > 0 && (
-        <div class="hero__actions" data-reveal="up" style="--delay:.15s">
+        <div class="hero__actions" data-reveal="up" style="--delay:1.1s">
           {actions.map((a) => <a class:list={['link']} href={a.href.startsWith('#') ? a.href : u(a.href)}>{a.label}</a>)}
         </div>
       )}
     </div>
   </div>
   {strip.length > 0 && <ul class="hero__strip wrap" data-stagger>{strip.map((s, i) => <li><a href={s.href.startsWith('#') ? s.href : u(s.href)}><b class="num">0{i + 1}</b><span>{s.label}</span></a></li>)}</ul>}
-  {facts.length > 0 && <dl class="hero__facts wrap">{facts.map((f) => <div><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
   {caption && <p class="hero__caption label">{caption.href ? <a href={u(caption.href)}>{caption.text}</a> : caption.text}</p>}
 </header>
 
@@ -46,14 +45,6 @@ const {world, image, pos, alt, num, kicker, title, lede, actions = [], strip = [
   .hero__foot { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 22px 40px; padding-top: clamp(14px, 2.4vh, 28px); border-top: 1px solid rgba(255,255,255,.3); }
   .hero__lede { max-width: 46ch; font-size: clamp(16px, 1.35vw, 20px); line-height: 1.45; color: rgba(255,255,255,.9); }
   .hero__actions { display: flex; flex-wrap: wrap; gap: 18px 34px; }
-  .hero--compact .hero__title { max-width: 16ch !important; font-size: clamp(48px, 8.4vw, 160px) !important; }
-  .hero--short { min-height: 74svh; }
-  .hero--facts .hero__body { padding-bottom: clamp(120px, 18vh, 180px); }
-  .hero__facts { position: absolute; inset: auto 0 0; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border-top: 1px solid rgba(255,255,255,.28); background: linear-gradient(0deg, rgba(4,6,8,.5), transparent); }
-  .hero__facts div { display: grid; gap: 4px; padding: 16px 16px 22px 0; }
-  .hero__facts div + div { padding-left: 16px; border-left: 1px solid rgba(255,255,255,.2); }
-  .hero__facts dt { font: 600 12px var(--f-display); letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.62); }
-  .hero__facts dd { font-size: clamp(14px, 1.3vw, 18px); }
   .hero__caption { position: absolute; top: calc(var(--header-h) + 28px); right: var(--gutter); color: rgba(255,255,255,.8); }
   .hero__caption a { border-bottom: 1px solid currentColor; padding-bottom: 3px; }
 
@@ -89,7 +80,7 @@ const {world, image, pos, alt, num, kicker, title, lede, actions = [], strip = [
   [data-hero='detailing'] .hero__title { max-width: 10ch; }
   [data-hero='detailing'] .hero__shade { background: linear-gradient(0deg, rgba(6,8,10,.82), rgba(6,8,10,0) 58%), linear-gradient(90deg, rgba(6,8,10,.5), transparent 66%); }
   [data-hero='detailing'] .hero__media :global(img) { animation: lens-settle 2.8s var(--ease) both; }
-  .hero__wipe { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(100deg, var(--studio) 0 60%, #fff 100%); transform-origin: right; animation: surface-wipe 1s var(--ease-io) both; }
+  .hero__wipe { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(100deg, var(--studio) 0 60%, #fff 100%); transform-origin: right; animation: surface-wipe 1.5s .15s var(--ease-io) both; }
   .hero__wipe::after { content: ''; position: absolute; inset: 0 0 0 auto; width: 18vw; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.85)); }
   @keyframes surface-wipe { from { transform: scaleX(1); } to { transform: scaleX(0); } }
   :global(.rm) .hero__wipe { display: none; }

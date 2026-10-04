@@ -11,8 +11,7 @@
     "build:pages": "GITHUB_PAGES=true astro build && node scripts/prepare-github-pages.mjs",
     "archive:legacy": "node scripts/archive-legacy-site.mjs",
     "preview": "astro preview",
-    "astro": "astro",
-    "images": "node scripts/optimize-images.mjs"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.0",

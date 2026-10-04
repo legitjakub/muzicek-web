@@ -1,9 +1,9 @@
 ---
-const {area, service, car} = Astro.props as {area: string; service?: string; car?: string}
+const {area, service} = Astro.props as {area: string; service?: string}
 ---
 <form class="inquiry" data-inquiry data-area={area} data-service={service || ''}>
   <div class="inquiry__row"><label>Jméno<input name="name" autocomplete="name" required/></label><label>Telefon<input name="phone" type="tel" autocomplete="tel" required/></label></div>
-  <div class="inquiry__row"><label>E-mail<input name="email" type="email" autocomplete="email" required/></label><label>Vůz<input name="car" placeholder="Značka, model, rok" value={car}/></label></div>
+  <div class="inquiry__row"><label>E-mail<input name="email" type="email" autocomplete="email" required/></label><label>Vůz<input name="car" placeholder="Značka, model, rok"/></label></div>
   {area === 'auta' && <label>O jakou pomoc máte zájem?<select name="intent"><option>Koupě / konkrétní vůz</option><option>Zakázkový dovoz</option><option>Prodej vlastního vozu</option><option>Přeprava</option></select></label>}
   {area === 'servis' && <label>Co se s vozem děje?<textarea name="message" rows="4" placeholder="Popište problém, požadovanou práci nebo úpravu" required></textarea></label>}
   {area === 'detailing' && <label>Co chcete na voze řešit?<textarea name="message" rows="4" placeholder="Stav vozu, požadovaný výsledek a přibližný termín" required></textarea></label>}

@@ -28,6 +28,4 @@ npm run build
 
 - Nabídka vozů a obsah servisních stránek se načítá ze Sanity. Katalog vypisuje reálné vozy; vybrané lokální fotografie pocházejí ze starého webu.
 - Původní web (27 HTML stránek a 217 obrázků) uchovává [`source-materials/`](source-materials/README.md). Archiv lze obnovit příkazem `npm run archive:legacy`. Dodaný návrh identity a originální videa zůstávají lokálně v ignorované složce `source-materials/brand/`, protože tento repozitář je veřejný.
-- Fotografie se generují příkazem `npm run images` (`scripts/optimize-images.mjs`, originály v `source-materials/photos/`) do `public/img/`.
-- Pohyb řídí `src/scripts/core.ts` (jedna rAF smyčka, scroll → CSS proměnné, nativní scroll se nikdy neblokuje). Je progresivní: bez JavaScriptu, na telefonu a při „omezit pohyb“ se sekce zobrazí jako běžné bloky bez pinování.
-- Návrh, mapa pohybu a plán: [`docs/REDESIGN.md`](docs/REDESIGN.md). Chybějící podklady od klienta: [`docs/CONTENT-GAPS.md`](docs/CONTENT-GAPS.md).
+- Scrollové efekty řídí `src/scripts/motion.ts` a `src/styles/motion.css`. Jsou progresivní: při vypnutém JavaScriptu zůstává obsah viditelný, při nastavení „omezit pohyb“ se animace a automatické video vypnou. Horizontální galerie na telefonu funguje jako běžná posuvná galerie.

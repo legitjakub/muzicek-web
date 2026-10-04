@@ -1,5 +1,5 @@
 // Builds the optimised photo set used by the site.
-// Sources: source-materials/photos (curated originals) and the legacy archive in source-materials.
+// Sources: public/media + public/images (curated earlier) and the legacy archive in source-materials.
 // Output : public/img/<id>-1600.webp, <id>-800.webp and src/data/images.json (size + dominant colour).
 import sharp from 'sharp'
 import {readdirSync, mkdirSync, writeFileSync, existsSync} from 'node:fs'
@@ -9,8 +9,8 @@ const root = new URL('..', import.meta.url).pathname
 const legacy = join(root, 'source-materials/legacy-site/assets')
 const legacyFiles = readdirSync(legacy)
 const L = (n) => join(legacy, legacyFiles.find((f) => f.startsWith(String(n).padStart(3, '0') + '-')))
-const M = (f) => join(root, 'source-materials/photos/media', f)
-const I = (f) => join(root, 'source-materials/photos/images', f)
+const M = (f) => join(root, 'public/media', f)
+const I = (f) => join(root, 'public/images', f)
 
 const range = (prefix, from, to) => Object.fromEntries(Array.from({length: to - from + 1}, (_, i) => [`${prefix}-${i + 1}`, L(from + i)]))
 const pick = (prefix, nums) => Object.fromEntries(nums.map((n, i) => [`${prefix}-${i + 1}`, L(n)]))
