@@ -46,9 +46,11 @@ const rs6Care = ['Dekontaminace a renovace laku', 'PPF full polep laku', 'PPF na
       <h2 id="read-title" class="display t-l" data-split>Stejný lesk neznamená stejný postup.</h2>
       <p class="lede" data-reveal="up">Nový vůz, každodenní auto a veterán potřebují jinou přípravu, jinou technologii i jinou následnou péči. Rozhodujeme podle materiálu a skutečného stavu, ne podle univerzálního balíčku.</p>
     </div>
-    <figure class="read__img frame" data-parallax-host>
+    <figure class="read__img frame" data-parallax-host data-beam>
       <Img id="alfa-detail" class="cover" data-parallax="0.09" alt="Kontrola laku Alfa Romeo 4C v bočním světle" pos="50% 35%" sizes="(min-width: 900px) 62vw, 100vw" />
       <span class="read__light" aria-hidden="true"></span>
+      <span class="read__beam" aria-hidden="true"></span>
+      <span class="read__hint label" aria-hidden="true">Inspekční světlo — veďte ho po laku</span>
       <figcaption class="cap read__cap">Kontrola povrchu v bočním světle</figcaption>
     </figure>
   </section>
@@ -166,6 +168,10 @@ const rs6Care = ['Dekontaminace a renovace laku', 'PPF full polep laku', 'PPF na
   .read__text h2 { max-width: 12ch; }
   .read__img { min-height: 80svh; --e: clamp(0, var(--p, 0) * 2.4 - .3, 1); }
   .read__light { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.34) 50%, transparent 62%); mix-blend-mode: soft-light; transform: translate3d(calc((var(--p, 0) - .5) * 260%), 0, 0); }
+  .read__beam { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle clamp(130px, 22vmin, 260px) at var(--mx, 50%) var(--my, 45%), rgba(8,10,12,0) 0%, rgba(8,10,12,.18) 45%, rgba(8,10,12,.8) 100%); }
+  .read__beam::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle clamp(60px, 9vmin, 120px) at var(--mx, 50%) var(--my, 45%), rgba(255,255,255,.22), rgba(255,255,255,0) 70%); mix-blend-mode: soft-light; }
+  .read__hint { position: absolute; top: 22px; right: var(--gutter); z-index: 2; color: #fff; padding: 6px 10px; background: rgba(8,10,12,.55); }
+  :global(.rm) .read__beam { display: none; }
   .read__cap { position: absolute; left: var(--gutter); bottom: 22px; color: #fff; }
   @media (min-width: 900px) { .read { grid-template-columns: .38fr .62fr; } .read__img { min-height: 118svh; } .read__text { position: sticky; top: 0; height: 100svh; padding-block: var(--header-h) 40px; } }
 

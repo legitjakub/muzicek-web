@@ -16,6 +16,12 @@ const stages = [
   {t: 'Realizace', x: 'Průběh dokumentujeme a změny rozsahu potvrzujeme.', std: 'Originální nebo ověřené díly', img: 'wrench-brake', alt: 'Mechanik utahuje brzdový třmen'},
   {t: 'Kontrola a předání', x: 'Výsledek ověříme před osobním předáním.', std: 'Společná kontrola při předání', img: 'm2-rear', alt: 'BMW M2 po dokončené práci v hale Mužíček'},
 ]
+const callouts = [
+  {t: 'Motor v pozadí', dot: [14, 18], elbow: [8, 8], label: [3, 8], side: 'l'},
+  {t: 'Brzdový třmen', dot: [32, 45], elbow: [20, 78], label: [4, 82], side: 'l'},
+  {t: 'Šrouby upevnění kotouče', dot: [60, 35], elbow: [76, 14], label: [97, 14], side: 'r'},
+  {t: 'Perforovaný kotouč', dot: [80, 52], elbow: [88, 70], label: [97, 74], side: 'r'},
+]
 const lift = [
   {id: 'octavia-13', t: 'Podvozek', c: 'a'}, {id: 'octavia-14', t: 'Zavěšení a pružiny', c: 'b'}, {id: 'octavia-12', t: 'Motorový prostor 1.8T', c: 'c'}, {id: 'octavia-15', t: 'Spodek vozu na zvedáku', c: 'd'},
 ]
@@ -41,6 +47,10 @@ const lift = [
     ]}
   />
 
+  <div class="mq mq--tech" data-marquee aria-hidden="true">
+    <span class="mq__row display out">Porsche · BMW · Mercedes-Benz · Audi · Volkswagen · Porsche · BMW · Mercedes-Benz</span>
+    <span class="mq__row rev display">Diagnostika · Mechanika · Performance · Suchý led · Podvozek · Diagnostika · Mechanika</span>
+  </div>
   <section class="brands wrap" aria-label="Značky">
     <p class="label rail">02 · Servis</p>
     <p class="display brands__text" data-wordscrub>Servisujeme vozy Porsche, BMW, Mercedes-Benz, Audi, Volkswagen a další.</p>
@@ -73,6 +83,26 @@ const lift = [
         <div class="bench__gauge" aria-hidden="true"><i></i>{stages.map((_, i) => <b class="num">0{i + 1}</b>)}</div>
       </div>
     </div>
+  </section>
+
+  <!-- annotated detail: understated technical callouts drawn onto the photograph -->
+  <section class="anatomy wrap" data-progress aria-labelledby="an-title">
+    <header>
+      <p class="label" data-reveal="fade">Detail, který rozhoduje</p>
+      <h2 id="an-title" class="display t-xl" data-split>Anatomie brzdy.</h2>
+    </header>
+    <figure class="anatomy__fig">
+      <div class="anatomy__img frame"><Img id="caliper" class="cover" alt="Karbon-keramický brzdový kotouč se žlutým třmenem, v pozadí motor" sizes="(min-width: 900px) 80vw, 100vw" /></div>
+      <svg class="anatomy__lines" viewBox="0 0 100 66.67" preserveAspectRatio="none" aria-hidden="true">
+        {callouts.map((c, i) => <polyline class="ln" style={`--i:${i}`} points={`${c.dot[0]},${c.dot[1] * 0.6667} ${c.elbow[0]},${c.elbow[1] * 0.6667} ${c.label[0]},${c.label[1] * 0.6667}`} />)}
+      </svg>
+      {callouts.map((c, i) => (
+        <span class="dot" style={`--x:${c.dot[0]}%;--y:${c.dot[1]}%;--i:${i}`} aria-hidden="true"></span>
+      ))}
+      <ul class="anatomy__labels">
+        {callouts.map((c, i) => <li class:list={[c.side]} style={`--x:${c.label[0]}%;--y:${c.label[1]}%;--i:${i}`}><b class="num">0{i + 1}</b>{c.t}</li>)}
+      </ul>
+    </figure>
   </section>
 
   <!-- spec-sheet ledger -->
@@ -149,7 +179,23 @@ const lift = [
 </Base>
 
 <style>
-  .brands { display: grid; gap: 22px; padding-block: clamp(100px, 15vw, 240px); }
+  .mq--tech { padding-top: clamp(60px, 9vw, 140px); }
+  .mq--tech .mq__row { font-size: clamp(64px, 13vw, 240px); line-height: .9; }
+  .anatomy { display: grid; gap: 40px; padding-block: clamp(60px, 9vw, 140px) clamp(90px, 13vw, 200px); }
+  .anatomy header { display: grid; gap: 14px; }
+  .anatomy__fig { position: relative; }
+  .anatomy__img { aspect-ratio: 3 / 2; }
+  .anatomy__lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .anatomy__lines .ln { fill: none; stroke: #fff; stroke-width: 1.2; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1; pathLength: 1; }
+  .dot { position: absolute; left: var(--x); top: calc(var(--y) * .9999); width: 12px; height: 12px; margin: -6px 0 0 -6px; border: 1.5px solid #fff; border-radius: 50%; box-shadow: 0 0 0 4px rgba(255,255,255,.12); }
+  .dot::after { content: ''; position: absolute; inset: 3px; background: var(--red); border-radius: 50%; }
+  .anatomy__labels li { position: absolute; left: var(--x); top: var(--y); display: flex; gap: 10px; align-items: baseline; padding: 6px 10px; background: rgba(8,10,12,.82); border-left: 2px solid var(--red); font: 600 clamp(11px, 1.1vw, 15px) var(--f-display); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; transform: translate(0, -50%); }
+  .anatomy__labels li.r { transform: translate(-100%, -50%); }
+  .anatomy__labels b { color: var(--red); }
+  :global(.js:not(.rm)) .anatomy .ln { stroke-dashoffset: calc(1 - clamp(0, (var(--p, 0) - .18 - var(--i) * .07) * 7, 1)); }
+  :global(.js:not(.rm)) .anatomy .dot, :global(.js:not(.rm)) .anatomy__labels li { opacity: clamp(0, (var(--p, 0) - .18 - var(--i) * .07) * 7, 1); }
+  @media (max-width: 700px) { .anatomy__labels li { font-size: 10px; padding: 4px 6px; } }
+  .brands { display: grid; gap: 22px; padding-block: clamp(30px, 5vw, 80px) clamp(100px, 15vw, 240px); }
   .brands__text { max-width: 16ch; font-size: clamp(54px, 10.4vw, 190px); line-height: .88; }
   .rail { color: var(--mute); }
   @media (min-width: 900px) { .brands { grid-template-columns: 12ch 1fr; align-items: start; } .rail { padding-top: 1.6vw; } }

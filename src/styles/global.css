@@ -165,3 +165,10 @@ body.menu-open .menu { visibility: visible; clip-path: inset(0); transition: cli
 
 .js:not(.rm) .ws { opacity: .16; transition: opacity .5s var(--ease); }
 .js:not(.rm) .ws.is-lit { opacity: 1; }
+
+/* kinetic type bands: position is bound to scroll progress, not time */
+.mq { overflow: hidden; display: grid; gap: .04em; padding-block: clamp(30px, 5vw, 80px); user-select: none; }
+.mq__row { display: block; white-space: nowrap; margin-left: -18vw; transform: translate3d(calc(var(--mq, 0) * 1vw), 0, 0); will-change: transform; }
+.mq__row.rev { margin-left: -42vw; transform: translate3d(calc(var(--mq, 0) * -1vw), 0, 0); }
+.mq__row.out { color: transparent; -webkit-text-stroke: 1.5px currentColor; }
+.rm .mq__row, .rm .mq__row.rev { transform: none; margin-left: 0; }

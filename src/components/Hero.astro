@@ -65,11 +65,20 @@ const {world, image, pos, alt, num, kicker, title, lede, actions = [], strip = [
   @keyframes frame-open { from { clip-path: inset(9% 9% 9% 9%); } to { clip-path: inset(0); } }
   @keyframes lens-settle { from { transform: scale(1.16); } to { transform: scale(1.01); } }
 
+  /* CARS — centred, showroom plate */
+  [data-hero='auta'] .hero__body { justify-items: center; text-align: center; }
+  [data-hero='auta'] .hero__kicker { justify-content: center; }
+  [data-hero='auta'] .hero__foot { width: 100%; justify-content: center; text-align: center; flex-direction: column; align-items: center; }
+  [data-hero='auta'] .hero__actions { justify-content: center; }
+  [data-hero='auta'] .hero__caption { top: 50%; right: calc(var(--gutter) - 8px); transform-origin: right center; transform: rotate(90deg) translate(50%, -100%); writing-mode: horizontal-tb; white-space: nowrap; }
+
   /* SERVIS — workshop: desaturated, technical strip, corner marks */
   [data-hero='servis'] .hero__media { filter: saturate(.72) contrast(1.06) brightness(.92); animation: shutter 1.5s var(--ease) both; }
   [data-hero='servis'] .hero__media :global(img) { animation: lens-settle 2.4s var(--ease) both; }
   [data-hero='servis'] .hero__shade { background: linear-gradient(0deg, rgba(4,6,8,.94), rgba(4,6,8,.15) 70%), rgba(8,14,22,.22); }
-  [data-hero='servis'] .hero__body { padding-bottom: clamp(120px, 17vh, 170px); }
+  [data-hero='servis'] .hero__body { min-height: 100svh; grid-template-rows: auto auto 1fr; align-content: start; padding-bottom: clamp(120px, 17vh, 170px); }
+  [data-hero='servis'] .hero__foot { align-self: end; }
+  [data-hero='servis'] .hero__shade { background: linear-gradient(180deg, rgba(4,6,8,.78), rgba(4,6,8,.1) 46%, rgba(4,6,8,.85)), rgba(8,14,22,.2) !important; }
   [data-hero='servis'] .hero__title { max-width: none; font-size: clamp(54px, 9.4vw, 184px); }
   @keyframes shutter { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
   .hero__ticks i { position: absolute; z-index: 1; width: 26px; height: 26px; border: 0 solid rgba(255,255,255,.7); }
@@ -87,7 +96,12 @@ const {world, image, pos, alt, num, kicker, title, lede, actions = [], strip = [
 
   /* DETAILING — surface: a panel of studio light wipes away, leaving a reflection */
   [data-hero='detailing'] .hero__title { max-width: 10ch; }
-  [data-hero='detailing'] .hero__shade { background: linear-gradient(0deg, rgba(6,8,10,.82), rgba(6,8,10,0) 58%), linear-gradient(90deg, rgba(6,8,10,.5), transparent 66%); }
+  [data-hero='detailing'] .hero__body { justify-items: end; text-align: right; }
+  [data-hero='detailing'] .hero__kicker { justify-content: flex-end; flex-direction: row-reverse; }
+  [data-hero='detailing'] .hero__foot { width: 100%; flex-direction: row-reverse; }
+  [data-hero='detailing'] .hero__actions { justify-content: flex-end; }
+  [data-hero='detailing'] .hero__caption { right: auto; left: var(--gutter); }
+  [data-hero='detailing'] .hero__shade { background: linear-gradient(0deg, rgba(6,8,10,.82), rgba(6,8,10,0) 58%), linear-gradient(270deg, rgba(6,8,10,.55), transparent 66%); }
   [data-hero='detailing'] .hero__media :global(img) { animation: lens-settle 2.8s var(--ease) both; }
   .hero__wipe { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(100deg, var(--studio) 0 60%, #fff 100%); transform-origin: right; animation: surface-wipe 1s var(--ease-io) both; }
   .hero__wipe::after { content: ''; position: absolute; inset: 0 0 0 auto; width: 18vw; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.85)); }

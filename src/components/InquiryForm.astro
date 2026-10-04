@@ -2,6 +2,7 @@
 const {area, service, car} = Astro.props as {area: string; service?: string; car?: string}
 ---
 <form class="inquiry" data-inquiry data-area={area} data-service={service || ''}>
+  {area === 'servis' && <p class="inquiry__head label"><span>Zakázkový list</span><span>Mužíček · Servis</span></p>}
   <div class="inquiry__row"><label>Jméno<input name="name" autocomplete="name" required/></label><label>Telefon<input name="phone" type="tel" autocomplete="tel" required/></label></div>
   <div class="inquiry__row"><label>E-mail<input name="email" type="email" autocomplete="email" required/></label><label>Vůz<input name="car" placeholder="Značka, model, rok" value={car}/></label></div>
   {area === 'auta' && <label>O jakou pomoc máte zájem?<select name="intent"><option>Koupě / konkrétní vůz</option><option>Zakázkový dovoz</option><option>Prodej vlastního vozu</option><option>Přeprava</option></select></label>}
@@ -30,4 +31,19 @@ const {area, service, car} = Astro.props as {area: string; service?: string; car
   .inquiry__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 22px 36px; padding-top: 6px; }
   .inquiry__foot p { max-width: 44ch; font-size: 13px; line-height: 1.5; color: var(--mute); }
   @media (max-width: 620px) { .inquiry__row { grid-template-columns: 1fr; } }
+  .inquiry__head { display: none; }
+  /* Servis: the form is a work order */
+  :global([data-world='servis']) .inquiry { counter-reset: f; gap: 0; border: 1px solid var(--line); background: rgba(255,255,255,.02); }
+  :global([data-world='servis']) .inquiry__head { display: flex; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--line); background: var(--steel-2); color: var(--fg); }
+  :global([data-world='servis']) .inquiry__row { gap: 0; }
+  :global([data-world='servis']) .inquiry label { counter-increment: f; padding: 14px 18px 4px; border-bottom: 1px solid var(--line); }
+  :global([data-world='servis']) .inquiry__row label + label { border-left: 1px solid var(--line); }
+  :global([data-world='servis']) .inquiry label::before { content: counter(f, decimal-leading-zero); margin-right: 10px; color: var(--red); }
+  :global([data-world='servis']) .inquiry input, :global([data-world='servis']) .inquiry select, :global([data-world='servis']) .inquiry textarea { border-bottom: 0; padding-block: 10px 14px; }
+  :global([data-world='servis']) .inquiry__foot { padding: 18px; }
+  /* Auta: a sheet of paper on the desk */
+  :global([data-world='auta']) .inquiry { padding: clamp(22px, 3vw, 44px); background: #fff; box-shadow: 0 40px 70px -40px rgba(0,0,0,.28), 0 0 0 1px rgba(0,0,0,.05); }
+  :global([data-world='auta']) .inquiry label { font-family: var(--f-serif); font-size: 17px; letter-spacing: 0; text-transform: none; color: var(--mute); }
+  /* Detailing: a lit panel */
+  :global([data-world='detailing']) .inquiry { padding: clamp(22px, 3vw, 44px); background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,255,255,.45)); box-shadow: inset 0 0 0 1px rgba(255,255,255,.8), 0 30px 60px -40px rgba(0,0,0,.3); }
 </style>

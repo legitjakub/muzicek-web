@@ -6,7 +6,7 @@ const root = document.documentElement
 const reducedQuery = matchMedia('(prefers-reduced-motion: reduce)')
 export const isReduced = () => reducedQuery.matches
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v))
-const smooth = (a: number, b: number, x: number) => {
+export const smooth = (a: number, b: number, x: number) => {
   const t = clamp((x - a) / (b - a))
   return t * t * t * (t * (t * 6 - 15) + 10)
 }
@@ -145,6 +145,41 @@ function wordScrub(el: HTMLElement) {
   })
 }
 
+
+/* ---------- inspection lamp: a beam of light that follows the pointer (or drifts with scroll on touch) ---------- */
+function initBeam(el: HTMLElement) {
+  const set = (x: number, y: number) => { el.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`); el.style.setProperty('--my', `${(y * 100).toFixed(1)}%`) }
+  set(0.5, 0.45)
+  if (isReduced()) return
+  if (matchMedia('(pointer: fine)').matches) {
+    let x = 0.5, y = 0.45, tx = x, ty = y, raf = 0
+    const loop = () => {
+      x += (tx - x) * 0.14; y += (ty - y) * 0.14
+      set(x, y)
+      raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.002 ? requestAnimationFrame(loop) : 0
+    }
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect()
+      tx = clamp((e.clientX - r.left) / r.width); ty = clamp((e.clientY - r.top) / r.height)
+      if (!raf) raf = requestAnimationFrame(loop)
+    })
+  } else scrub(el, 'view', (p) => set(0.18 + 0.64 * p, 0.5 + 0.22 * Math.sin(p * 6.28)))
+}
+
+/* ---------- pointer parallax for a pinned stage (fine pointers only) ---------- */
+export function pointerDepth(el: HTMLElement) {
+  if (!matchMedia('(pointer: fine)').matches) return () => {}
+  let x = 0, y = 0, tx = 0, ty = 0, raf = 0
+  const loop = () => {
+    x += (tx - x) * 0.08; y += (ty - y) * 0.08
+    el.style.setProperty('--ptx', x.toFixed(3)); el.style.setProperty('--pty', y.toFixed(3))
+    raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.003 ? requestAnimationFrame(loop) : 0
+  }
+  const move = (e: PointerEvent) => { tx = (e.clientX / innerWidth - 0.5) * 2; ty = (e.clientY / innerHeight - 0.5) * 2; if (!raf) raf = requestAnimationFrame(loop) }
+  el.addEventListener('pointermove', move)
+  return () => { el.removeEventListener('pointermove', move); el.style.removeProperty('--ptx'); el.style.removeProperty('--pty') }
+}
+
 /* ---------- word / line reveals ---------- */
 function splitText(el: HTMLElement) {
   if (el.classList.contains('is-split')) return
@@ -226,6 +261,8 @@ function boot() {
 
   if (!isReduced()) document.querySelectorAll<HTMLElement>('[data-wordscrub]').forEach(wordScrub)
   document.querySelectorAll<HTMLElement>('[data-hscroll]').forEach((t) => whenPinned(() => hscroll(t)))
+  document.querySelectorAll<HTMLElement>('[data-beam]').forEach(initBeam)
+  if (!isReduced()) document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((m) => scrub(m, 'view', (p) => m.style.setProperty('--mq', ((p - 0.5) * 80).toFixed(2))))
   header()
   menu()
   schedule()

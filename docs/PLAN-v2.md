@@ -18,7 +18,7 @@
 - **Servis → technický výkres**: popisky s odkazovými čarami přímo na fotce, měřicí kříže, kinetické obrysové značky, formulář jako *zakázkový list*.
 - **Detailing → světlo**: inspekční lampa, která sleduje kurzor (na dotyku se hýbe se scrollem), výřezy písmen oknem do laku.
 
-## Vlna 1 (tohle teď dělám)
+## Vlna 1 — HOTOVO (větev, ještě ne na main)
 
 1. **Hub – intro**: obří MUŽÍČEK, jehož písmena jsou „okna“ do jasné fotky haly (zbytek ztmavený).
 2. **Hub – stage**: odometr 01→02→03 (číslice se převalují se scrollem) + jemný pohyb fotky za kurzorem.

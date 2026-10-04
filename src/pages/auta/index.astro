@@ -51,6 +51,11 @@ const spec = (v: (typeof vehicles)[number]) => [['Rok', v.year], ['Nájezd', km(
     <p class="serif statement__text" data-wordscrub>Každý vůz má jiný příběh. Způsob práce zůstává stejný: znát fakta a nic neskrývat.</p>
   </section>
 
+  <div class="mq mq--serif" data-marquee aria-hidden="true">
+    <span class="mq__row serif">Dovoz <em>·</em> Prodej <em>·</em> Přeprava <em>·</em> Vozy v nabídce <em>·</em> Dovoz <em>·</em> Prodej <em>·</em> Přeprava <em>·</em></span>
+    <span class="mq__row rev serif out">Výběr <em>·</em> Prověření <em>·</em> Předání <em>·</em> Výběr <em>·</em> Prověření <em>·</em> Předání <em>·</em> Výběr <em>·</em> Prověření</span>
+  </div>
+
   <!-- SIGNATURE: the showroom sequence -->
   <section class="showroom" id="vozy" data-showroom style={`--n:${Math.max(n, 1)}`} aria-label="Vozy v nabídce">
     <div class="showroom__stage">
@@ -181,6 +186,8 @@ const spec = (v: (typeof vehicles)[number]) => [['Rok', v.year], ['Nájezd', km(
 </Base>
 
 <style>
+  .mq--serif .mq__row { font-size: clamp(72px, 15vw, 280px); font-style: italic; line-height: 1; letter-spacing: -.03em; }
+  .mq--serif em { display: inline-block; width: .14em; height: .14em; margin-inline: .32em; vertical-align: .28em; background: var(--red); font-size: 0; }
   .statement { display: grid; gap: 28px; padding-block: clamp(110px, 17vw, 270px) clamp(70px, 10vw, 150px); }
   .statement__text { max-width: 19ch; font-size: clamp(40px, 7.4vw, 136px); line-height: .98; }
 
@@ -241,7 +248,7 @@ const spec = (v: (typeof vehicles)[number]) => [['Rok', v.year], ['Nájezd', km(
   }
 
   /* open */
-  .open { --e: clamp(0, (var(--p, 0) - .1) * 2.6, 1); background: var(--bg); padding: 0; }
+  .open { --e: clamp(0, (var(--p, 0) - .1) * 2.6, 1); background: color-mix(in srgb, #0b0b0c calc(var(--e) * 100%), var(--paper)); padding: 0; }
   .open__frame { position: relative; height: 100svh; min-height: 560px; overflow: hidden; color: #fff; clip-path: inset(calc((1 - var(--e)) * 14%) calc((1 - var(--e)) * 10%)); }
   :global(.rm) .open__frame { clip-path: none; }
   .open__shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,5,6,.82), rgba(5,5,6,.05) 62%); }
@@ -268,13 +275,17 @@ const spec = (v: (typeof vehicles)[number]) => [['Rok', v.year], ['Nájezd', km(
 
   /* reel */
   .reel { padding-block: clamp(40px, 6vw, 90px) 0; }
-  .reel__rail { display: flex; align-items: center; gap: clamp(20px, 3vw, 48px); padding: 0 var(--gutter) 40px; overflow-x: auto; scroll-snap-type: x proximity; }
+  .reel__rail { position: relative; display: flex; align-items: center; gap: clamp(20px, 3vw, 48px); padding: 54px var(--gutter) 54px; overflow-x: auto; scroll-snap-type: x proximity; background: #0b0b0c; color: #f1efe9; }
+  .reel__rail::before, .reel__rail::after { content: ''; position: absolute; left: 0; width: 100%; min-width: max-content; height: 12px; background: repeating-linear-gradient(90deg, #f1efe9 0 16px, transparent 16px 34px); opacity: .85; border-radius: 2px; }
+  .reel__rail::before { top: 20px; } .reel__rail::after { bottom: 20px; }
+  .reel__item figcaption { color: #bdb9ae; }
   .reel__intro { flex: 0 0 min(80vw, 520px); display: grid; gap: 18px; }
+  .reel__intro .mute { color: #a9a597; }
   .reel__item { flex: 0 0 min(66vw, 340px); scroll-snap-align: start; }
   .reel__item :global(img) { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
   .reel.is-pinned { padding: 0; }
   .reel.is-pinned .reel__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: grid; align-items: center; }
-  .reel.is-pinned .reel__rail { overflow: visible; padding-bottom: 0; transform: translate3d(var(--hx, 0px), 0, 0); will-change: transform; width: max-content; }
+  .reel.is-pinned .reel__rail { overflow: visible; padding-block: 64px; transform: translate3d(var(--hx, 0px), 0, 0); will-change: transform; width: max-content; }
   .reel.is-pinned .reel__intro { flex-basis: min(34vw, 520px); padding-right: 4vw; }
   .reel.is-pinned .reel__item { flex-basis: auto; }
   .reel.is-pinned .reel__item :global(img) { height: min(64vh, 640px); width: auto; aspect-ratio: 3 / 4; }
